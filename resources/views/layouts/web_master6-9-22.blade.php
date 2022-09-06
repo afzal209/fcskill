@@ -36,67 +36,35 @@
 @include('layouts.script')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
 
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
 
 <script>
     var getToken = localStorage.getItem('token');
     var getUser = localStorage.getItem('user_data');
-   
-    
-     if (getUser != null) {
-          var signal_data_array = '';
+    if (getUser != null) {
         var json_parse = JSON.parse(getUser);
         var signal_type = json_parse.signal_type;
-       
-        function signal_notify(type){
-            // console.log(is_notify);
-            $.ajax({
-                url : '/api/signal_notify/'+ type ,
-                headers: {
-                    'Authorization': 'Bearer ' + getToken
-                },
-                data : {
-                     "_token": "{{ csrf_token() }}",
-                },
-
-                type : "POST",
-                success : function(data){
-                    console.log(data);
-                    if($.trim(data) == ''){
-                        console.log('Empty');
+        // console.log(signal_type);
+        let socket = '';
+        let ip_address = '127.0.0.1';
+        let socket_port = '3004';
+        socket = io(ip_address + ':' + socket_port);
+        // console.log(socket);
+        socket.on('receivedSignalData', (message) => {
+            // console.log(message);
+            if (message != null) {
+                if (message = signal_type) {
+                    if (message = 0) {
+                        toastr.success('Forex Signal Add');
+                    } else {
+                        toastr.success('Crypto Signal Add')
                     }
-                    else{
-                        if (data[1] = 'success') {
-                        // console.log('Yes');
-                            if(type = 0){
-                                toastr.success('<a href="">Forex Signal Add</a>');
-                            } else {
-                                toastr.success('<a href="">Crypto Signal Add</a>')
-                            }   
-                        }
-                        else{
-                            console.log('Test');
-                        }
-                    }
-                    // console.log('Repeat');
-                    // if (data[1] = 'success') {
-                    //     console.log('Yes');
-                    //     // if(type = 0){
-                    //     //     toastr.success('<a href="">Forex Signal Add</a>');
-                    //     // } else {
-                    //     //     toastr.success('<a href="">Crypto Signal Add</a>')
-                    //     // }   
-                    // }
-                    // else{
-                    //     console.log('Test');
-                    // }
                 }
-            })
-        }
-        setInterval('signal_notify(signal_type)', 5000);
-
-       
+            }
+        });
     }
 
 
@@ -132,6 +100,7 @@
     //     // console.log('No');
     // }
     $(document).ready(function() {
+        // toastr.success('Testing', 'Success');
         $(':input[type="submit"][id="register"]').prop('disabled', true);
         var getToken = localStorage.getItem('token');
         if (getToken != null) {
@@ -172,7 +141,7 @@
             // alert('submit')
             var email = $('.email').val();
             var password = $('.password').val();
-            // console.log('Email' + email, 'Password' + password);
+            console.log('Email' + email, 'Password' + password);
             var data = {
                 "_token": "{{ csrf_token() }}",
                 "email": email,
@@ -189,25 +158,12 @@
                     "password": password,
                 },
                 success: function(data) {
-                    console.log(data);
-                    if (data.error) {
-                        $('#msg').html('');
-                        $('#msg').show();
-                        // if (data.error[0] == 'undefined') {
-                        //     $('#msg').html('<h5>' + data.error[1] +'</br>'+ '</h5>');
-                        // }
-                        // else if(data.error[1] == 'undefined'){
-                        //     $('#msg').html('<h5>' + data.error[0] +'</br>'+ '</h5>');
-                        // }
-                        $('#msg').html('<h5>' + data.error +'</br>'+ '</h5>');
-                        // console.log(data.message);
-                    }
-                    else if(data.message){
-                        $('#msg').html('');
+                    // console.log(data.errors);
+                    if (data.message) {
                         $('#msg').show();
                         $('#msg').html('<h5>' + data.message + '</h5>');
-                    } 
-                    else {
+                        // console.log(data.message);
+                    } else {
                         $('#msg').hide();
                         $('#msg').html('');
                         localStorage.setItem('token', data.token);

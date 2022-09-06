@@ -60,50 +60,6 @@ class ApiController extends Controller
         return response()->json(['data' => $signal_check],200);
         
     }
-
-    public function signal_notify($notify_type){
-        // return $notify_type;
-        $signal_notify = Signal::where('is_notify',0)->where('signal_type',$notify_type)->get();
-        // return $signal_notify;
-        // if($signal_notify->isEmpty()){
-        //      return response()->json(['data','error'],200);    
-        // }
-        // else{
-        //     // return 'No';
-            for($i = 0 ; $i < count($signal_notify) ; $i++){
-        //     // return $signal_notify[$i];
-                if($signal_notify[$i]['is_notify'] === 0){
-                    $signal_update_notify = Signal::find($signal_notify[$i]['id']);
-        //             // return $signal_update_notify;
-                    $signal_update_notify->is_notify = 1;
-                    $signal_update_notify->update();
-                    return response()->json(['data', 'success'],200);
-
-                }
-        //     // else{
-        //     //     return response()->json(['data' => 'error'],200);
-        //     // }
-            
-
-            }
-
-        // }
-        // for($i = 0 ; $i < count($signal_notify) ; $i++){
-        //     // return $signal_notify[$i];
-        //     if($signal_notify[$i]['is_notify'] === 0){
-        //         $signal_update_notify = Signal::find($signal_notify[$i]['id']);
-        //         // return $signal_update_notify;
-        //         $signal_update_notify->is_notify = 1;
-        //         $signal_update_notify->update();
-        //         return response()->json(['data' => 'success'],200);
-        //     }
-        //     // else{
-        //     //     return response()->json(['data' => 'error'],200);
-        //     // }
-            
-
-        // }
-    }
     public function prediction_ideas(Request $request){
         // return $request;
         $prediction_ideas = PredictionIdeas::orderBy('created_at','desc')->get();
@@ -125,7 +81,11 @@ class ApiController extends Controller
         }
     }
 
-    
+    public function check_notify_signal(Request $request){
+        return $request->id;
+        // $signal_notify = Signal::find($id);
+        // return $signal_check;
+    }
 
     public function new_prediction_ideas(Request $request)
     {

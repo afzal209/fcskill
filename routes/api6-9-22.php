@@ -27,7 +27,7 @@ Route::get('signals', [ApiController::class, 'signals']);
 Route::post('new_signals', [ApiController::class, 'new_signals'])->name('new_signals');
 Route::get('prediction_ideas',[ApiController::class,'prediction_ideas']);
 Route::post('new_prediction_ideas', [ApiController::class, 'new_prediction_ideas'])->name('new_prediction_ideas');
-Route::post('new_trading_tips',[ApiController::class, 'new_trading_tips'])->name('new_trading_tips');
+Route::post('new_trading_tips',[ApiController::class, 'new_trading_tips']);
 
 
 Route::get('forex_signals', [ApiController::class, 'forex_signals']);
@@ -55,7 +55,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 Route::get('signal_check/{type}',[ApiController::class,'signal_check']);
 Route::get('/web_setting/(text}',[ApiController::class,'web_setting']);
-Route::post('signal_notify/{notify_type}',[ApiController::class,'signal_notify']);
 });
+Route::post('check_notify_signal/{id}',[ApiController::class,'check_notify_signal']);
 
 Route::get('/web_setting/(text}',[ApiController::class,'web_setting']);
