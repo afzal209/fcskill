@@ -1,0 +1,134 @@
+body,
+html {
+    width: 100%;
+    height: auto;
+}
+
+.mai {
+    margin-left: 200px;
+}
+
+.whi {
+    color: white;
+}
+
+.bla {
+    color: black
+}
+
+.fa {
+    padding: 8px;
+    font-size: 15px;
+    width: 30px;
+    text-align: center;
+    text-decoration: none;
+    margin: 5px 2px;
+    border: 1px solid white;
+    border-radius: 50%;
+}
+
+.fa:hover {
+    opacity: 0.7;
+}
+
+.fa-facebook {
+    background: #101111;
+    color: white;
+}
+
+.fa-twitter {
+    background: #101111;
+    color: white;
+}
+
+.fa-telegram {
+    background: #101111;
+    color: white;
+}
+
+.fa-instagram {
+    background: #101111;
+    color: white;
+}
+
+@media (min-device-width: 1399px) and (max-device-width: 4000px) {
+    .dis {
+        font-size: 10px;
+    }
+}
+
+@media (min-device-width: 1200px) and (max-device-width: 1399px) {
+    .dis {
+        font-size: 10px;
+    }
+}
+
+@media (min-device-width: 992px) and (max-device-width: 1199px) {
+    .dis {
+        font-size: 6px;
+    }
+    .sec_navigation_font_size {
+        margin-left: -50px;
+    }
+}
+
+@media (min-device-width: 768px) and (max-device-width: 991px) {
+    .dis {
+        font-size: 5px;
+    }
+    .button-top {
+        margin-top: 3px;
+    }
+    .sec_navigation_font_size {
+        margin-left: -50px;
+    }
+}
+
+@media (min-device-width: 576px) and (max-device-width: 767px) {
+    .dis {
+        font-size: 5px;
+    }
+    .button-top {
+        margin-top: 3px;
+    }
+    .sec_navigation_font_size {
+        margin-left: -50px;
+    }
+}
+
+@media (min-device-width: 320px) and (max-device-width: 575px) {
+    .dis {
+        font-size: 3px;
+        margin-top: 20px;
+    }
+    .dis1 {
+        font-size: 25px;
+    }
+    .button-top {
+        margin-top: 3px;
+    }
+    .sec_navigation_font_size {
+        font-size: 13px;
+        margin-left: -50px;
+    }
+    .sec_navigation_li_font_size {
+        font-size: 13px;
+    }
+}
+
+.dropdown-toggle::after {
+    color: gold;
+}
+
+.responsive {
+    width: 100%;
+    height: auto;
+}
+
+.card-rad {
+    border-radius: 25px;
+}
+
+.navbar-toggler-icon {
+    border-color: lightgreen;
+}
