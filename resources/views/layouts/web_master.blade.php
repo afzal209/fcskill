@@ -62,23 +62,23 @@
 
                 type : "POST",
                 success : function(data){
-                    console.log(data);
-                    if($.trim(data) == ''){
-                        console.log('Empty');
-                    }
-                    else{
-                        if (data[1] = 'success') {
+                    // console.log(data[1]);
+                    // if($.trim(data) == ''){
+                    //     console.log('Empty');
+                    // }
+                    // else{
+                            if (data[1] == 1) {
                         // console.log('Yes');
-                            if(type = 0){
-                                toastr.success('<a href="">Forex Signal Add</a>');
+                            if(type == 0){
+                                toastr.success('<a href="signal-type">Forex Signal Add</a>');
                             } else {
-                                toastr.success('<a href="">Crypto Signal Add</a>')
+                                toastr.success('<a href="signal-type">Crypto Signal Add</a>')
                             }   
                         }
                         else{
                             console.log('Test');
                         }
-                    }
+                    // }
                     // console.log('Repeat');
                     // if (data[1] = 'success') {
                     //     console.log('Yes');

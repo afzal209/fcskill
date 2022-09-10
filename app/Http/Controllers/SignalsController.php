@@ -181,7 +181,8 @@ class SignalsController extends Controller
 
         $data2=array(
             'date' => $date,
-            'mobile_application_name' => $mobile_application_name
+            'mobile_application_name' => $mobile_application_name,
+            'type' => '0',           
         );
 
         $arrayToSend = array(
@@ -198,7 +199,7 @@ class SignalsController extends Controller
 
         $headers = array();
         $headers[] = 'Content-Type: application/json';
-        $headers[] = 'Authorization: key= AAAADqh952s:APA91bGIU0-Azx32Z3mQu-gqlTJKZnCowyM-23eLflcE0NG8vY_FptYQ8-BdO_OwyQADs-sMH4gd_ugAm52Yk_t_gS2aKBetYdiSpv1qkF1CaWq_ODA2w-88wju65gHpadspUnOETzOB';
+        $headers[] = 'Authorization: key= AAAAjnWUSGA:APA91bHHbXjwK4qGxigeKhmIOOja4UDNKr26e-1F85xATfqMSm1oRf1x5LHwjZBhHRXduGAhG_H-GdEpwq0Iwl3ykEHHwnJ-UIeqAIG88HZ876EW6bhMedLKX3r7VN8sYT1dre2JvfQx';
 
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         curl_setopt($ch, CURLOPT_HTTPHEADER,$headers);

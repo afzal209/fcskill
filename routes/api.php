@@ -51,11 +51,12 @@ Route::get('support', [ApiController::class, 'support']);
 Route::post('register',[RegisterController::class,'register']);
 
 Route::post('login',[RegisterController::class,'login'] );
-Route::group(['middleware' => ['auth:sanctum']], function () {
+// Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::middleware('auth:sanctum')->group( function () {
 
-Route::get('signal_check/{type}',[ApiController::class,'signal_check']);
-Route::get('/web_setting/(text}',[ApiController::class,'web_setting']);
-Route::post('signal_notify/{notify_type}',[ApiController::class,'signal_notify']);
+    Route::get('signal_check/{type}',[ApiController::class,'signal_check']);
+    Route::get('web_setting/(text}',[ApiController::class,'web_setting']);
+    Route::post('signal_notify/{notify_type}',[ApiController::class,'signal_notify']);
 });
 
-Route::get('/web_setting/(text}',[ApiController::class,'web_setting']);
+// Route::get('/web_setting/(text}',[ApiController::class,'web_setting']);

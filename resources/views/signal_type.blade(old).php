@@ -2,7 +2,7 @@
 @section('content')
     <div id="signal_data" style="border: 2em"></div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script> -->
     <script>
         // let socket = '';
         // let ip_address = '127.0.0.1';

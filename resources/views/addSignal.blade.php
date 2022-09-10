@@ -70,15 +70,15 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script> -->
 
     <script>
         $(document).ready(function() {
-            let socket = '';
+            // let socket = '';
 
-            let ip_address = '127.0.0.1';
-            let socket_port = '3004';
-            socket = io(ip_address + ':' + socket_port);
+            // let ip_address = '127.0.0.1';
+            // let socket_port = '3004';
+            // socket = io(ip_address + ':' + socket_port);
             // alert();
             $('.mb-1').click(function(e) {
                 e.preventDefault();
@@ -98,7 +98,7 @@
 
                         // console.log(data);
                         toastr.success(data.doneMessage, 'Success');
-                        socket.emit('receivedSignalData', data.data);
+                        // socket.emit('receivedSignalData', data.data);
                         CKEDITOR.instances['signal_text'].setData('');
 
                     }

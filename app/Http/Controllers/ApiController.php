@@ -21,7 +21,7 @@ class ApiController extends Controller
             $fcm_token = Fcm_token::where('device_id' , '=', $request->device_id)->first();
 
             $fcm_token->device_id = $request->device_id;
-            $fcm_token->choice = $request->user_choice;
+            $fcm_token->user_choice = $request->user_choice;
             $fcm_token->fcm_token = $request->fcm_token;
             $fcm_token->save();
 
@@ -63,46 +63,30 @@ class ApiController extends Controller
 
     public function signal_notify($notify_type){
         // return $notify_type;
-        $signal_notify = Signal::where('is_notify',0)->where('signal_type',$notify_type)->get();
+        if($notify_type == 0){
+            $signal_notify = Signal::where('is_notify',0)->where('signal_type',0)->first();
+        }
+        else if($notify_type == 1){
+            $signal_notify = Signal::where('is_notify',0)->where('signal_type',1)->first();
+        }
+        else{
+            $signal_notify = Signal::where('is_notify',0)->first();
+        }
+        // $signal_notify = Signal::where('is_notify',0)->where('signal_type',$notify_type)->first();
         // return $signal_notify;
-        // if($signal_notify->isEmpty()){
-        //      return response()->json(['data','error'],200);    
-        // }
-        // else{
-        //     // return 'No';
-            for($i = 0 ; $i < count($signal_notify) ; $i++){
-        //     // return $signal_notify[$i];
-                if($signal_notify[$i]['is_notify'] === 0){
-                    $signal_update_notify = Signal::find($signal_notify[$i]['id']);
-        //             // return $signal_update_notify;
-                    $signal_update_notify->is_notify = 1;
-                    $signal_update_notify->update();
-                    return response()->json(['data', 'success'],200);
+        if($signal_notify){
+            $signal_update_notify = Signal::find($signal_notify->id);
+            // return $signal_update_notify;
+            $signal_update_notify->is_notify = 1;
+            $signal_update_notify->update();
+        
+        return response()->json(['data' , 1]);
+        }
+        else{
+        return response()->json(['data' , 0]);
 
-                }
-        //     // else{
-        //     //     return response()->json(['data' => 'error'],200);
-        //     // }
-            
-
-            }
-
-        // }
-        // for($i = 0 ; $i < count($signal_notify) ; $i++){
-        //     // return $signal_notify[$i];
-        //     if($signal_notify[$i]['is_notify'] === 0){
-        //         $signal_update_notify = Signal::find($signal_notify[$i]['id']);
-        //         // return $signal_update_notify;
-        //         $signal_update_notify->is_notify = 1;
-        //         $signal_update_notify->update();
-        //         return response()->json(['data' => 'success'],200);
-        //     }
-        //     // else{
-        //     //     return response()->json(['data' => 'error'],200);
-        //     // }
-            
-
-        // }
+        }
+        
     }
     public function prediction_ideas(Request $request){
         // return $request;

@@ -50,65 +50,68 @@
         <div class="col-12 col-sm-12 col-md-2 col-lg-4"></div>
     </div> --}}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script> -->
     <script>
         var getToken = localStorage.getItem('token');
-        if (!getToken) {
-            window.location.href = '/'
-            localStorage.setItem('click', 'true');
-        } else {
-            var getUser = localStorage.getItem('user_data');
-            var json_parse = JSON.parse(getUser);
-            var signal_type = json_parse.signal_type;
-            function signal_check(type){
-                 $('.signal_data').empty();
-                var current_page = '';
-                var last_page = '';
-                var first_page_url = '';
-                var last_page_url = '';
-                var per_page = '';
-                var total = '';
-                $.ajax({
-                    url: '/api/signal_check/' + type,
-                    headers: {
-                        'Authorization': 'Bearer ' + getToken
-                    },
-                    type: 'GET',
+        // if (!getToken) {
+        //     window.location.href = '/'
+        //     localStorage.setItem('click', 'true');
+        // } else {
+        //     var getUser = localStorage.getItem('user_data');
+        //     var json_parse = JSON.parse(getUser);
+        //     var signal_type = json_parse.signal_type;
+        //     function signal_check(type){
+        //          $('.signal_data').empty();
+        //         var current_page = '';
+        //         var last_page = '';
+        //         var first_page_url = '';
+        //         var last_page_url = '';
+        //         var per_page = '';
+        //         var total = '';
+        //         $.ajax({
+        //             url: '/api/signal_check/' + type,
+        //             headers: {
+        //                 'Authorization': 'Bearer ' + getToken
+        //             },
+        //             type: 'GET',
 
-                    success: function(data) {
-                        console.log(data);
-                        current_page = data.data.current_page;
-                        // console.log(current_page);
-                        last_page = data.data.last_page;
-                        signal_data_array = data.data.data;
-                        first_page_url = data.data.first_page_url;
-                        last_page_url = data.data.last_page_url
-                        per_page = data.data.per_page;
-                        total = data.data.total;
-                        total_page = Math.ceil(total / per_page);
-                        console.log(total_page);
-                        for (var i = 0; i < signal_data_array.length; i++) {
-                            // console.log(signal_data_array[i]);
-                            $('.signal_data').append(
-                                '<div class="row"><div class="col-12 col-sm-12 col-md-2 col-lg-4"></div><div class="col-12 col-sm-12 col-md-8 col-lg-4"><div class="card bg-light card-rad"><div class="card-body"> <p class="fs-6 lh-1 text-center"><strong>' +
-                                signal_data_array[i]['signal_text'] +
-                                '</strong></p> <p class="text-center fs-6 lh-1 text-center mb-n3">' +
-                                signal_data_array[i]['created_at'] +
-                                '</p></div></div></div><div class="col-12 col-sm-12 col-md-2 col-lg-4"></div></div><br>'
-                            );
-                        }
+        //             success: function(data) {
+        //                 console.log(data);
+        //                 current_page = data.data.current_page;
+        //                 // console.log(current_page);
+        //                 last_page = data.data.last_page;
+        //                 signal_data_array = data.data.data;
+        //                 first_page_url = data.data.first_page_url;
+        //                 last_page_url = data.data.last_page_url
+        //                 per_page = data.data.per_page;
+        //                 total = data.data.total;
+        //                 total_page = Math.ceil(total / per_page);
+        //                 console.log(total_page);
+        //                 for (var i = 0; i < signal_data_array.length; i++) {
+        //                     // console.log(signal_data_array[i]);
+        //                     $('.signal_data').append(
+        //                         '<div class="row"><div class="col-12 col-sm-12 col-md-2 col-lg-4"></div><div class="col-12 col-sm-12 col-md-8 col-lg-4"><div class="card bg-light card-rad"><div class="card-body"> <p class="fs-6 lh-1 text-center"><strong>' +
+        //                         signal_data_array[i]['signal_text'] +
+        //                         '</strong></p> <p class="text-center fs-6 lh-1 text-center mb-n3">' +
+        //                         signal_data_array[i]['created_at'] +
+        //                         '</p></div></div></div><div class="col-12 col-sm-12 col-md-2 col-lg-4"></div></div><br>'
+        //                     );
+        //                 }
 
                         
-                    }
-                });
-            }
-        setInterval('signal_check(signal_type)', 5000);
-        }
+        //             }
+        //         });
+        //     }
+        // setInterval('signal_check(signal_type)', 5000);
+        // }
         var selectedPageNo = 0;
         $(document).ready(function() {
 
            
-
+            if (!getToken) {
+            window.location.href = '/'
+            localStorage.setItem('click', 'true');
+        }
 
             var getUser = localStorage.getItem('user_data');
             var json_parse = JSON.parse(getUser);
