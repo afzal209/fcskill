@@ -102,7 +102,7 @@ class ApiController extends Controller
     public function new_signals(Request $request)
     {
         if(!empty($request->id)) {
-            $signals = Signal::where('id' , '>', $request->id)->orderBy('created_at','desc')->get();
+            $signals = Signal::where('id' , '>', $request->id)->where('signal_type','=',$request->user_choice)->orderBy('created_at','desc')->get();
             return response()->json(['data' => $signals], 200);
         } else {
             return response()->json(['data' => array() ], 200);

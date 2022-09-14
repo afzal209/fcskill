@@ -56,7 +56,22 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="form-row ">
+                                <div class="form-group col-md-12">
+                                    <label for="status">Both for Web</label>
+                                    <div class="i-checks">
 
+                                        <div class="i-checks">
+                                            <label>
+                                                <input type="checkbox" name="status_both" value="2">
+                                                <i></i> Both
+                                            </label>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
                             <button type="submit" class="btn btn-primary mb-1"><i class="fa fa-save"></i>
                                 SAVE</button>
 
@@ -85,6 +100,8 @@
                 // alert('yes');
                 var signal_text = CKEDITOR.instances['signal_text'].getData();
                 var signal_type = $("input[name='signal_type']:checked").val();
+                var status_both = $("input[name='status_both']:checked").val();
+                
                 // console.log('Signal Text' + signal_text + 'Signal Type' + signal_type);
                 $.ajax({
                     url: "{{ url('/admin/signals/store') }}",
@@ -93,13 +110,14 @@
                         "_token": "{{ csrf_token() }}",
                         "signal_text": signal_text,
                         "signal_type": signal_type,
+                        "status_both" : status_both,
                     },
                     success: function(data) {
 
-                        // console.log(data);
-                        toastr.success(data.doneMessage, 'Success');
-                        // socket.emit('receivedSignalData', data.data);
-                        CKEDITOR.instances['signal_text'].setData('');
+                        console.log(data);
+                        // toastr.success(data.doneMessage, 'Success');
+                        // // // socket.emit('receivedSignalData', data.data);
+                        // CKEDITOR.instances['signal_text'].setData('');
 
                     }
                 });

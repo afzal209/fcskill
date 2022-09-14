@@ -55,11 +55,11 @@ class TradingTipsController extends Controller
         $Notification->save();
         
         if(!empty($request->trading_type)) {
-            $tokens = Fcm_token::where('user_choice' , '!=', 1)->pluck('fcm_token')->toArray();
-           $res = $this->send_push("Forex Tips", "New Trading Tips has been added. Click to view.", $tokens, date('Y-m-d') ,'Fcskill');
+            $tokens = Fcm_token::pluck('fcm_token')->toArray();
+           $res = $this->send_push("Trading Tips", "New Trading Tips has been added. Click to view.", $tokens, date('Y-m-d') ,'Fcskill');
         } else {
             $tokens = Fcm_token::where('user_choice' , '!=', 0)->pluck('fcm_token')->toArray();
-            $res = $this->send_push('Crypto Tips', "New Trading Tips has been added. Click to view.", $tokens, date('Y-m-d') , 'Fcskill');
+            $res = $this->send_push('Trading Tips', "New Trading Tips has been added. Click to view.", $tokens, date('Y-m-d') , 'Fcskill');
         }
         // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
         return redirect()->back()->with('doneMessage', 'Trading Tips Added!');

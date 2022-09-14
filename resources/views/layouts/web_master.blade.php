@@ -44,60 +44,60 @@
     var getUser = localStorage.getItem('user_data');
    
     
-     if (getUser != null) {
-          var signal_data_array = '';
-        var json_parse = JSON.parse(getUser);
-        var signal_type = json_parse.signal_type;
+    //  if (getUser != null) {
+    //       var signal_data_array = '';
+    //     var json_parse = JSON.parse(getUser);
+    //     var signal_type = json_parse.signal_type;
        
-        function signal_notify(type){
-            // console.log(is_notify);
-            $.ajax({
-                url : '/api/signal_notify/'+ type ,
-                headers: {
-                    'Authorization': 'Bearer ' + getToken
-                },
-                data : {
-                     "_token": "{{ csrf_token() }}",
-                },
+    //     function signal_notify(type){
+    //         // console.log(is_notify);
+    //         $.ajax({
+    //             url : '/api/signal_notify/'+ type ,
+    //             headers: {
+    //                 'Authorization': 'Bearer ' + getToken
+    //             },
+    //             data : {
+    //                  "_token": "{{ csrf_token() }}",
+    //             },
 
-                type : "POST",
-                success : function(data){
-                    // console.log(data[1]);
-                    // if($.trim(data) == ''){
-                    //     console.log('Empty');
-                    // }
-                    // else{
-                            if (data[1] == 1) {
-                        // console.log('Yes');
-                            if(type == 0){
-                                toastr.success('<a href="signal-type">Forex Signal Add</a>');
-                            } else {
-                                toastr.success('<a href="signal-type">Crypto Signal Add</a>')
-                            }   
-                        }
-                        else{
-                            console.log('Test');
-                        }
-                    // }
-                    // console.log('Repeat');
-                    // if (data[1] = 'success') {
-                    //     console.log('Yes');
-                    //     // if(type = 0){
-                    //     //     toastr.success('<a href="">Forex Signal Add</a>');
-                    //     // } else {
-                    //     //     toastr.success('<a href="">Crypto Signal Add</a>')
-                    //     // }   
-                    // }
-                    // else{
-                    //     console.log('Test');
-                    // }
-                }
-            })
-        }
-        setInterval('signal_notify(signal_type)', 5000);
+    //             type : "POST",
+    //             success : function(data){
+    //                 // console.log(data[1]);
+    //                 // if($.trim(data) == ''){
+    //                 //     console.log('Empty');
+    //                 // }
+    //                 // else{
+    //                         if (data[1] == 1) {
+    //                     // console.log('Yes');
+    //                     // if(type == 1){
+    //                     //         toastr.success('<a href="signal-type">Forex Signal Add</a>');
+    //                     //     } else {
+    //                     //         toastr.success('<a href="signal-type">Crypto Signal Add</a>')
+    //                     //     }   
+    //                     // }
+    //                     // else{
+    //                     //     console.log('Test');
+    //                     // }
+    //                 // }
+    //                 // console.log('Repeat');
+    //                 // if (data[1] = 'success') {
+    //                 //     console.log('Yes');
+    //                 //     // if(type = 0){
+    //                 //     //     toastr.success('<a href="">Forex Signal Add</a>');
+    //                 //     // } else {
+    //                 //     //     toastr.success('<a href="">Crypto Signal Add</a>')
+    //                 //     // }   
+    //                 // }
+    //                 // else{
+    //                 //     console.log('Test');
+    //                 // }
+    //             }
+    //         })
+    //     }
+    //     setInterval('signal_notify(signal_type)', 5000);
 
        
-    }
+    // }
 
 
     function modal_open(id) {
