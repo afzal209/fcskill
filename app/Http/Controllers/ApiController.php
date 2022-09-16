@@ -101,24 +101,51 @@ class ApiController extends Controller
 
     public function new_signals(Request $request)
     {
-        if(!empty($request->id)) {
-            $signals = Signal::where('id' , '>', $request->id)->where('signal_type','=',$request->user_choice)->orderBy('created_at','desc')->get();
+        if($request->user_choice == 0){
+            $signals = Signal::where('id' , '>', $request->id)->where('signal_type','=', 0)->orderBy('created_at','desc')->get();
             return response()->json(['data' => $signals], 200);
-        } else {
-            return response()->json(['data' => array() ], 200);
         }
+        else if($request->user_choice == 1){
+            $signals = Signal::where('id' , '>', $request->id)->where('signal_type','=', 1)->orderBy('created_at','desc')->get();
+            return response()->json(['data' => $signals], 200);
+        }
+        else{
+            $signals = Signal::where('id' , '>', $request->id)->orderBy('created_at','desc')->get();
+            return response()->json(['data' => $signals], 200);
+        }
+        // if(!empty($request->id) and !empty($request->user_choice)) {
+        //     // $signals = Signal::where('id' , '>', $request->id)->orderBy('created_at','desc')->get();
+        //     $signals = Signal::where('id' , '>', $request->id)->where('signal_type','=',$request->user_choice)->orderBy('created_at','desc')->get();
+        //     return response()->json(['data' => $signals], 200);
+        // } else {
+        //     return response()->json(['data' => array() ], 200);
+        // }
     }
 
     
 
     public function new_prediction_ideas(Request $request)
     {
-        if(!empty($request->id)) {
-            $predictionideas = PredictionIdeas::where('id' , '>', $request->id)->where('prediction_type','=',$request->user_choice)->orderBy('created_at','desc')->get();
+        if($request->user_choice == 0){
+            $predictionideas = PredictionIdeas::where('id' , '>', $request->id)->where('prediction_type','=', 0)->orderBy('created_at','desc')->get();
             return response()->json(['data' => $predictionideas], 200);
-        } else {
-            return response()->json(['data' => array() ], 200);
         }
+        else if($request->user_choice == 1){
+            $predictionideas = PredictionIdeas::where('id' , '>', $request->id)->where('prediction_type','=', 1)->orderBy('created_at','desc')->get();
+            return response()->json(['data' => $predictionideas], 200);
+        }
+        else{
+            $predictionideas = PredictionIdeas::where('id' , '>', $request->id)->orderBy('created_at','desc')->get();
+            return response()->json(['data' => $predictionideas], 200);
+        }
+        // return $request;
+        // if(!empty($request->id) and !empty($request->user_choice)) {
+        //     // return 'Yes';
+        //     $predictionideas = PredictionIdeas::where('id' , '>', $request->id)->where('prediction_type','=',$request->user_choice)->orderBy('created_at','desc')->get();
+        //     return response()->json(['data' => $predictionideas], 200);
+        // } else {
+        //     return response()->json(['data' => array() ], 200);
+        // }
     }
      public function new_trading_tips(Request $request)
     {

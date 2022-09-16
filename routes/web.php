@@ -44,7 +44,7 @@ Route::get('/crypto-brokers-ranking',[HomeController::class,'cryptobrokersrankin
 Route::get('/technical-analysis',[HomeController::class,'technicalanalysis'])->name('technicalanalysis');
 Route::get('/fundamental-analysis',[HomeController::class,'fundamentalanalysis'])->name('fundamentalanalysis');
 Route::get('/privacy-policy-&-terms-and-conditions',[HomeController::class,'privacy'])->name('privacy');
-
+Route::get('/app-ads.txt',[HomeController::class,'app_ads'])->name('app_ads');
 
 
 Route::group(['middleware' => ['isLoggedin']], function() {

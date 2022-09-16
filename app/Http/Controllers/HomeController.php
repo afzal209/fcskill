@@ -77,4 +77,8 @@ class HomeController extends Controller
         return view('privacy');
     }
 
+    public function app_ads(){
+        return view('app_ads');
+    }
+
 }
