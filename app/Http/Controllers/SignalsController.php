@@ -60,51 +60,70 @@ class SignalsController extends Controller
             $Notification->signal_type = 0;
         }
         if(!empty($request->status_both)){
-            $Signal_user = Signal_User::where('signal_type','=',$request->status_both)->get();
+            // $Signal_user = Signal_User::where('signal_type','=',$request->status_both)->get();
             // return  $Signal_user;
-            for($i = 0 ; $i < count($Signal_user) ; $i++){
-                //  print_r($Signal_user[$i]['id']);
-                $NotificationStatus->user_id = $Signal_user[$i]['id'];
-                $NotificationStatus->type = 1;
-                $NotificationStatus->notification_text = "New Both signal has been added";
-
+            $signal_users = Signal_User::where('signal_type',$request->status_both)->get();
+            if($signal_users->empty()){
+                echo 'No Both';    
+            }    
+            else{
+                foreach($signal_users as $signal_user){
+                    //dd($signal_user->id);
+                    NotificationStatus::create([
+                        'user_id' => $signal_user->id,
+                        'type' => 2,
+                        'notification_text' => 'New both signal has been added'
+                    ]);       
+                }
             }
-            $NotificationStatus->save();
-
+            
         }
         else{
             if($request->signal_type == 0){
-                $Signal_user = Signal_User::where('signal_type','=',0)->get();
+                // $Signal_user = Signal_User::where('signal_type','=',0)->get();
+                $signal_users = Signal_User::where('signal_type',0)->get();
+
                 // return  $Signal_user;
-                if($Signal_user->empty()){
+                if($signal_users->empty()){
                 //     for($i = 0 ; $i < count($Signal_user) ; $i++){
                 //         print_r($Signal_user[$i]['id']);
                 //    }
                 //    return '';
-                return false;
+                    echo 'Test';
                 }
                 else{
-                    for($i = 0 ; $i < count($Signal_user) ; $i++){
-                        print_r($Signal_user[$i]['id']);
-                   }
-                   return '';
+                    // $signal_users = Signal_User::where('signal_type',0)->get();
+                    foreach($signal_users as $signal_user){
+                        //dd($signal_user->id);
+                        NotificationStatus::create([
+                            'user_id' => $signal_user->id,
+                            'type' => 0,
+                            'notification_text' => 'New Crypto signal has been added'
+                        ]);
+                        
+                    }
                 }
                 
             }
             else if($request->signal_type == 1){
-                $Signal_user = Signal_User::where('signal_type','=',1)->get();
-                // return  $Signal_user;
-                
-                for($i = 0 ; $i < count($Signal_user) ; $i++){
-                    //  print_r($Signal_user[$i]['id']);
-                    $NotificationStatus->user_id = $Signal_user[$i]['id'];
-                    $NotificationStatus->type = 1;
-                    $NotificationStatus->notification_text = "New forex signal has been added";
-
+                //dd(Signal_User::where('signal_type',1)->get('id'));
+                $signal_users = Signal_User::where('signal_type',1)->get();
+                if($signal_users->empty()){
+                    echo 'No Record';
                 }
-                $NotificationStatus->save();
-
-                // return '';
+                else{
+                    foreach($signal_users as $signal_user){
+                        //dd($signal_user->id);
+                        NotificationStatus::create([
+                            'user_id' => $signal_user->id,
+                            'type' => 1,
+                            'notification_text' => 'New forex signal has been added'
+                        ]);
+                        
+                    }
+                }
+                
+               
             }
         }
         
@@ -118,14 +137,14 @@ class SignalsController extends Controller
         // $NotificationStatus->save();
         $Notification->save();
         
-        // if(!empty($request->signal_type)) {
-        //     $tokens = Fcm_token::where('user_choice' , '!=', 1)->pluck('fcm_token')->toArray();
-        //    $res = $this->send_push("Forex Signal", "New forex signal has been added. Click to view.", $tokens, date('Y-m-d') ,'Fcskill');
-        // } else {
-        //     $tokens = Fcm_token::where('user_choice' , '!=', 0)->pluck('fcm_token')->toArray();
-        //     $res = $this->send_push('Crypto Signal', "New crypto signal has been added. Click to view.", $tokens, date('Y-m-d') , 'Fcskill');
-        // }
-        // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
+        if(!empty($request->signal_type)) {
+            $tokens = Fcm_token::where('user_choice' , '!=', 1)->pluck('fcm_token')->toArray();
+           $res = $this->send_push("Forex Signal", "New forex signal has been added. Click to view.", $tokens, date('Y-m-d') ,'Fcskill');
+        } else {
+            $tokens = Fcm_token::where('user_choice' , '!=', 0)->pluck('fcm_token')->toArray();
+            $res = $this->send_push('Crypto Signal', "New crypto signal has been added. Click to view.", $tokens, date('Y-m-d') , 'Fcskill');
+        }
+        return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
         // return redirect()->back()->with('doneMessage', 'Signal Added!');
     }
 
