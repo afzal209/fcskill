@@ -10,6 +10,7 @@ use App\Models\Fcm_token;
 use App\Models\News;
 use App\Models\PredictionIdeas;
 use App\Models\TradingTips;
+use App\Models\NotificationStatus;
 
 class ApiController extends Controller
 {
@@ -61,31 +62,62 @@ class ApiController extends Controller
         
     }
 
-    public function signal_notify($notify_type){
-        // return $notify_type;
-        if($notify_type == 0){
-            $signal_notify = Signal::where('is_notify',0)->where('signal_type',0)->first();
+    public function signal_notify(Request $request){
+        // return $request;
+        if ($request->action == 'view') {
+            # code...
+            if($request->type == 0){
+                $signal_notify = NotificationStatus::where('notify',0)->where('type',0)->where('user_id',$request->user_id)->count();
+            }
+            else if($request->type == 1){
+                $signal_notify = NotificationStatus::where('notify',0)->where('type',1)->where('user_id',$request->user_id)->count();
+            }
+            else{
+                $signal_notify = NotificationStatus::where('notify',0)->where('type',2)->where('user_id',$request->user_id)->count();
+            }
+            if($signal_notify){
+                return response()->json(['count' => $signal_notify]);
+            }
+            else{
+                return response()->json(['count' => 0]);
+            }
         }
-        else if($notify_type == 1){
-            $signal_notify = Signal::where('is_notify',0)->where('signal_type',1)->first();
+        else if($request->action == 'update'){
+            $signal_notify = NotificationStatus::where('notify',0)->where('type',$request->type)->where('user_id',$request->user_id)->get();
+            // return $signal_notify;
+            if(!$signal_notify->isEmpty()){
+                // echo 'Yes';
+                foreach($signal_notify as $signal_not){
+                    // print_r($signal_not['id']);
+                    $update_signal_not = NotificationStatus::find($signal_not['id']);
+                    // print_r($update_signal_not);    
+                    $update_signal_not->notify = 1;
+                    $update_signal_not->update();
+                    return response()->json(['count' => 1]);
+                }
+            }
+            else{
+                // echo 'No';
+                return response()->json(['count' => 0]);
+            }
+            
+            // return '';
         }
-        else{
-            $signal_notify = Signal::where('is_notify',0)->first();
-        }
-        // $signal_notify = Signal::where('is_notify',0)->where('signal_type',$notify_type)->first();
-        // return $signal_notify;
-        if($signal_notify){
-            $signal_update_notify = Signal::find($signal_notify->id);
-            // return $signal_update_notify;
-            $signal_update_notify->is_notify = 1;
-            $signal_update_notify->update();
         
-        return response()->json(['data' , 1]);
-        }
-        else{
-        return response()->json(['data' , 0]);
+        // // $signal_notify = Signal::where('is_notify',0)->where('signal_type',$notify_type)->first();
+        // // return $signal_notify;
+        // if($signal_notify){
+        //     $signal_update_notify = Signal::find($signal_notify->id);
+        //     // return $signal_update_notify;
+        //     $signal_update_notify->is_notify = 1;
+        //     $signal_update_notify->update();
+        
+        // return response()->json(['data' , 1]);
+        // }
+        // else{
+        // return response()->json(['data' , 0]);
 
-        }
+        // }
         
     }
     public function prediction_ideas(Request $request){

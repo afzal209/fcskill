@@ -42,8 +42,43 @@
 <script>
     var getToken = localStorage.getItem('token');
     var getUser = localStorage.getItem('user_data');
-   
-    
+    var json_parse = JSON.parse(getUser);
+    var user_id = json_parse.id;
+    var type = json_parse.signal_type;
+    if(getUser != null){
+        signal_count(user_id,type,'view');
+    }
+    function signal_count(user_id,type,action){
+        // console.log('User Id'+user_id+'Type'+type+'Action'+action);
+        $.ajax({
+            url : '/api/signal_notify',
+            headers: {
+                    'Authorization': 'Bearer ' + getToken
+            },
+            data : {
+                "_token": "{{ csrf_token() }}",
+                'user_id' : user_id,
+                'type' : type,
+                'action' : action,
+            },
+            type : 'POST',
+            success : function(data){
+                // console.log(data.count);
+                if(data.count == 0){
+                    // $('.count').hide();
+                    // console.log('No Counting');
+                    $('.count').html('');
+
+                }
+                else{
+                    $('.count').html(data.count);
+                }
+
+            }
+        })
+    }
+        
+ 
     //  if (getUser != null) {
     //       var signal_data_array = '';
     //     var json_parse = JSON.parse(getUser);

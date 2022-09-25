@@ -165,7 +165,7 @@
                     </li>
                     <li id="nav_signal" class="nav-item">
                         <a class="nav-link" href="signal-type">
-                            <font color="white" style="font-size:20px">Signals</font>
+                            <font color="white" style="font-size:20px">Signals</font><span class="label label-pill label-danger count" style="border-radius:10px;"></span> 
                         </a>
                     </li>
                     <li class="nav-item">
