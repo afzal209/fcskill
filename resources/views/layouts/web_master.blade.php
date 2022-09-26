@@ -42,8 +42,8 @@
 <script>
     var getToken = localStorage.getItem('token');
     var getUser = localStorage.getItem('user_data');
-    var json_parse = JSON.parse(getUser);
     var user_id = json_parse.id;
+    var json_parse = JSON.parse(getUser);
     var type = json_parse.signal_type;
     if(getUser != null){
         signal_count(user_id,type,'view');
