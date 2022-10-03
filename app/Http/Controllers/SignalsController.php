@@ -63,10 +63,8 @@ class SignalsController extends Controller
             // $Signal_user = Signal_User::where('signal_type','=',$request->status_both)->get();
             // return  $Signal_user;
             $signal_users = Signal_User::where('signal_type',$request->status_both)->get();
-            if($signal_users->empty()){
-                echo 'No Both';    
-            }    
-            else{
+            // return $signal_users;
+            if(!empty($signal_users)){
                 foreach($signal_users as $signal_user){
                     //dd($signal_user->id);
                     NotificationStatus::create([
@@ -75,6 +73,10 @@ class SignalsController extends Controller
                         'notification_text' => 'New both signal has been added'
                     ]);       
                 }
+            }    
+            else{
+                echo 'No Both';    
+               
             }
             
         }
@@ -83,16 +85,12 @@ class SignalsController extends Controller
                 // $Signal_user = Signal_User::where('signal_type','=',0)->get();
                 $signal_users = Signal_User::where('signal_type',0)->get();
 
-                // return  $Signal_user;
-                if($signal_users->empty()){
+                // return  $signal_users;
+                if(!empty($signal_users)){
                 //     for($i = 0 ; $i < count($Signal_user) ; $i++){
                 //         print_r($Signal_user[$i]['id']);
                 //    }
                 //    return '';
-                    echo 'Test';
-                }
-                else{
-                    // $signal_users = Signal_User::where('signal_type',0)->get();
                     foreach($signal_users as $signal_user){
                         //dd($signal_user->id);
                         NotificationStatus::create([
@@ -103,15 +101,18 @@ class SignalsController extends Controller
                         
                     }
                 }
+                else{
+                    // $signal_users = Signal_User::where('signal_type',0)->get();
+                    echo 'Test';
+                    
+                }
                 
             }
             else if($request->signal_type == 1){
                 //dd(Signal_User::where('signal_type',1)->get('id'));
                 $signal_users = Signal_User::where('signal_type',1)->get();
-                if($signal_users->empty()){
-                    echo 'No Record';
-                }
-                else{
+                // return $signal_users;
+                if(!empty($signal_users)){
                     foreach($signal_users as $signal_user){
                         //dd($signal_user->id);
                         NotificationStatus::create([
@@ -121,6 +122,10 @@ class SignalsController extends Controller
                         ]);
                         
                     }
+                }
+                else{
+                    echo 'No Record';
+                    
                 }
                 
                

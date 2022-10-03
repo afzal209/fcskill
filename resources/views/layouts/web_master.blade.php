@@ -42,10 +42,14 @@
 <script>
     var getToken = localStorage.getItem('token');
     var getUser = localStorage.getItem('user_data');
-    var user_id = json_parse.id;
-    var json_parse = JSON.parse(getUser);
-    var type = json_parse.signal_type;
+    
+    var json_parse = '';
+    var user_id = '';
+    var type = '';
     if(getUser != null){
+        json_parse = JSON.parse(getUser)
+        user_id = json_parse.id
+        type = json_parse.signal_type
         signal_count(user_id,type,'view');
     }
     function signal_count(user_id,type,action){
