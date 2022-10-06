@@ -11,6 +11,7 @@ use App\Models\News;
 use App\Models\PredictionIdeas;
 use App\Models\TradingTips;
 use App\Models\NotificationStatus;
+use App\Models\GainProfit;
 
 class ApiController extends Controller
 {
@@ -249,6 +250,51 @@ class ApiController extends Controller
         $terms_and_conditions = General_option::where('meta_key', 'terms_and_conditions')->first()->meta_value;
         return response()->json(['data' => $terms_and_conditions], 200);
     }
+    public function gain_profits_add(Request $request){
+        if($request->hasFile('image')) {
+
+            //get filename with extension
+            $filenamewithextension = $request->file('image')->getClientOriginalName();
+
+            //get filename without extension
+            $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+
+            //get file extension
+            $extension = $request->file('image')->getClientOriginalExtension();
+            // return $extension;
+            if($extension != "jpg" && $extension != "png" && $extension != "jpeg" && $extension != "jpeg" && $extension != "heic"){
+                return response()->json(['error' => 'This file format not except']);
+
+            }
+            else{
+                // echo 'No';
+                $filenametostore = $filename.'_'.time().'.'.$extension;
+
+                $request->file('image')->move(public_path('assets/uploads'), $filenametostore);
+
+                $url = asset('assets/uploads/'.$filenametostore);
+
+                $gain_profits = new GainProfit();
+                $gain_profits->device_id = $request->device_id;
+                $gain_profits->user_choice = $request->user_choice;
+                $gain_profits->image = $url;
+                $gain_profits->save();
+                return response()->json(['success' => 'Data has Inserted']);
+
+            }
+        }
+        else{
+            return response()->json(['error' => 'Image Required']);
+        }
+    }
+
+    public function gain_profits_show(Request $request){
+        if($request->status == 2){
+            $gain_profits = GainProfit::where('user_choice',$request->user_choice)->get();
+        }
+        return response()->json(['data' => $gain_profits]);
+    }
+
 
     public function support(Request $request)
     {

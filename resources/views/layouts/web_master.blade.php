@@ -191,6 +191,11 @@
                 $(':input[type="submit"][id="register"]').prop('disabled', true);
             }
         })
+
+        $('#nav_signal').click(function (e) {
+            e.preventDefault();
+            console.log(user_id);
+        })
         // function logout() {
         //     console.log('Test');
         //     // localStorage.removeItem('user_data');
