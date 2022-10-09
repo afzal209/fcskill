@@ -64,7 +64,9 @@ Route::group(['middleware' => ['isAllowed']], function () {
 	Route::get('/admin/logout', [LogoutController::class, 'logout'])->name('logout');
 	Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-		//Signals
+	
+	
+	//Signals
 	Route::get('/admin/signals', [SignalsController::class, 'index'])->name('signals');
 	Route::get('/admin/signals/add', [SignalsController::class, 'add'])->name('add_signal');
 	Route::post('/admin/signals/store', [SignalsController::class, 'store'])->name('store_signal');
@@ -90,17 +92,18 @@ Route::group(['middleware' => ['isAllowed']], function () {
 	Route::patch('/admin/tradings/update/{id}', [TradingTipsController::class, 'update'])->name('tradings_update');
 	Route::delete('/admin/tradings/destory/{id}', [TradingTipsController::class, 'destroy'])->name('tradings_delete');
 	Route::post('/admin/tradings/image_upload', [TradingTipsController::class, 'upload'])->name('upload_tradings_image');
+	// Gain Profit
 	
+
+	Route::get('/admin/gain_profits',[GainProfitsController::class,'index'])->name('gain_profits');
+	Route::post('/admin/gain_profits/check_gain_status',[GainProfitsController::class,'check_status'])->name('check_gain_status');
+	Route::delete('/admin/gain_profits/destory/{id}', [GainProfitsController::class, 'destroy'])->name('gain_profits_delete');
 	Route::get('/admin/no_access', [DashboardController::class, 'no_access'])->name('no_access');
 
 });
 
 Route::group(['middleware' => ['admin']], function () {
-	// Gain Profit
 	
-
-	Route::get('/admin/gain_profits',[GainProfitsController::class,'index'])->name('gain_profits');
-	Route::post('/admin/gain_profits/check_gain_status/{id}/{status}',[GainProfitsController::class,'check_status'])->name('check_gain_status');
 
 	//Market Education
 	Route::get('/admin/market_education', [MarketEductionsController::class, 'index'])->name('market_education');

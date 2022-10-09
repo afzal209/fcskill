@@ -251,7 +251,7 @@ class ApiController extends Controller
         return response()->json(['data' => $terms_and_conditions], 200);
     }
     public function gain_profits_add(Request $request){
-
+        date_default_timezone_set('Asia/Karachi');
         // return $request;
         if($request->hasFile('image')) {
 
@@ -280,6 +280,8 @@ class ApiController extends Controller
                 $gain_profits->device_id = $request->device_id;
                 $gain_profits->user_choice = $request->user_choice;
                 $gain_profits->image = $url;
+                $gain_profits->created_at = date("Y-m-d H:i:s", strtotime('now'));
+                $gain_profits->updated_at = date("Y-m-d H:i:s", strtotime('now'));
                 $gain_profits->save();
                 return response()->json(['success' => 'Thanks for your post!it will publish soon as possible!']);
 

@@ -61,19 +61,22 @@
                                     </td>
                                     <td class="center">
                                         @if ($gainprofit->status == 1)
-                                        <a href="" onclick="check_gain_status('{{$gainprofit->id}}',2)" class="btn btn-primary btn-xs">Approve</a><a href="" class="btn btn-warning btn-xs" onclick="check_gain_status('{{$gainprofit->id}}',3)">Reject</a>
+                                        <a href=""  class="btn btn-primary btn-xs approve" data-id="{{$gainprofit->id}}">Approve</a><a href="" class="btn btn-warning btn-xs reject" data-id="{{$gainprofit->id}}" >Reject</a>
                                         @elseif($gainprofit->status == 2)
-                                        <a href="" class="btn btn-warning btn-xs" onclick="check_gain_status('{{$gainprofit->id}}',3)">Reject</a>
+                                        <a href="" class="btn btn-warning btn-xs reject" data-id="{{$gainprofit->id}}">Reject</a>
                                         @endif
                                         <!-- {!! $gainprofit->status
             ? '<a href="" class="btn btn-primary btn-xs" >Approve</a><a href=""class="btn btn-danger btn-xs">Reject</a>'
             : '<a href="" class="btn btn-danger btn-xs">Reject</a>' !!} -->
 
 
-                                        <form method="post" action="">
-                                            <button type="submit" class="btn btn-danger btn-xs">
-                                                Delete
-                                            </button>
+                                        <form method="post" action="{{ route('gain_profits_delete', ['id' => $gainprofit->id]) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" onclick="return confirm('Are you sure?')"
+                                                        class="btn btn-danger btn-xs">
+                                                        Delete
+                                                    </button>
                                         </form>
 
 
@@ -97,9 +100,54 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
-    $(document).ready(function(e) {
-        e.preventDefault();
-        alert('test');
+    $(document).ready(function() {
+        $('.approve').click(function(e){
+            e.preventDefault();
+            var id= $(this).attr('data-id');
+            // console.log(id);
+            $.ajax({
+                url : "{{ url('admin/gain_profits/check_gain_status')}}",
+                type : "post",
+                data : {
+                    "_token": "{{ csrf_token() }}",
+                    "id" : id,
+                    "status" : 1,
+                },
+                success : function(data){
+                    // console.log(data);
+                    if(data.data == 'success'){
+                        toastr.success('Post Has Been Approve', 'Success');
+                        location.reload();
+                    }
+                }
+            });
+        })
+
+        $('.reject').click(function(e){
+            e.preventDefault();
+            var id= $(this).attr('data-id');
+            // console.log(id);
+            $.ajax({
+                url : "{{ url('admin/gain_profits/check_gain_status')}}",
+                type : "post",
+                data : {
+                    "_token": "{{ csrf_token() }}",
+                    "id" : id,
+                    "status" : 2,
+                },
+                success : function(data){
+                    // console.log(data);
+                    if(data.data == 'success'){
+                        toastr.success('Post Has Been Deleted', 'Success');
+                        location.reload();
+                    }
+                }
+            });
+        })
+
+       
+      
+       
 
     });
     // function check_gain_status(id,status){
