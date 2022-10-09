@@ -14,6 +14,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TradingTipsController;
+use App\Http\Controllers\GainProfitsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +96,11 @@ Route::group(['middleware' => ['isAllowed']], function () {
 });
 
 Route::group(['middleware' => ['admin']], function () {
+	// Gain Profit
+	
+
+	Route::get('/admin/gain_profits',[GainProfitsController::class,'index'])->name('gain_profits');
+	Route::post('/admin/gain_profits/check_gain_status/{id}/{status}',[GainProfitsController::class,'check_status'])->name('check_gain_status');
 
 	//Market Education
 	Route::get('/admin/market_education', [MarketEductionsController::class, 'index'])->name('market_education');
@@ -134,6 +140,7 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('/admin/roles/edit/{id}', [RolesController::class, 'edit'])->name('role_edit');
 	Route::patch('/admin/roles/update/{id}', [RolesController::class, 'update'])->name('role_update');
 	Route::delete('/admin/roles/destory/{id}', [RolesController::class, 'destroy'])->name('role_delete');
+
 
 });
 

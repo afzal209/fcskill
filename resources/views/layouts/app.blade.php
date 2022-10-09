@@ -17,7 +17,8 @@
         Request::is('admin/news') ||
         Request::is('admin/roles') ||
         Request::is('admin/predictions') ||
-        Request::is('admin/tradings'))
+        Request::is('admin/tradings') ||
+        Request::is('admin/gain_profits'))
         <link href="{{ asset('assets/css/plugins/dataTables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
         {{-- <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css" rel="stylesheet"> --}}
     @endif
@@ -80,7 +81,11 @@
                             </a>
                         </li>
                     @endif --}}
-
+                    <li class="{{ Request::is('admin/gain_profits') ? 'active' : '' }}">
+                        <a href="{{ route('gain_profits') }}">
+                        <i class="fa fa-get-pocket" aria-hidden="true"></i> <span class="nav-label">Gain / Profit</span>
+                        </a>
+                    </li>    
                     <li class="{{ Request::is('admin/signals') ? 'active' : '' }}">
                         <a href="{{ route('signals') }}">
                             <i class="fa fa-signal"></i> <span class="nav-label">Signals</span>
@@ -202,7 +207,8 @@
         Request::is('admin/news') ||
         Request::is('admin/roles') ||
         Request::is('admin/predictions') ||
-        Request::is('admin/tradings'))
+        Request::is('admin/tradings')||
+        Request::is('admin/gain_profits'))
         <script type="text/javascript" src="{{ asset('assets/js/plugins/dataTables/jquery.dataTables.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('assets/js/plugins/dataTables/dataTables.bootstrap4.min.js') }}"></script>
 

@@ -251,6 +251,8 @@ class ApiController extends Controller
         return response()->json(['data' => $terms_and_conditions], 200);
     }
     public function gain_profits_add(Request $request){
+
+        // return $request;
         if($request->hasFile('image')) {
 
             //get filename with extension
@@ -279,7 +281,7 @@ class ApiController extends Controller
                 $gain_profits->user_choice = $request->user_choice;
                 $gain_profits->image = $url;
                 $gain_profits->save();
-                return response()->json(['success' => 'Data has Inserted']);
+                return response()->json(['success' => 'Thanks for your post!it will publish soon as possible!']);
 
             }
         }
@@ -290,9 +292,25 @@ class ApiController extends Controller
 
     public function gain_profits_show(Request $request){
         if($request->status == 2){
-            $gain_profits = GainProfit::where('user_choice',$request->user_choice)->get();
+            $gain_profits = GainProfit::where('user_choice',$request->user_choice)->where('status',$request->status)->orderBy('created_at','desc')->get();
+            return response()->json(['data' => $gain_profits]);
+        
         }
-        return response()->json(['data' => $gain_profits]);
+    }
+
+    public function gain_profit_latest(Request $request){
+        if($request->user_choice == 0){
+            $gain_profits = GainProfit::where('id' , '>', $request->id)->where('user_choice','=', 0)->where('status',2)->orderBy('created_at','desc')->get();
+            return response()->json(['data' => $gain_profits], 200);
+        }
+        else if($request->user_choice == 1){
+            $gain_profits = GainProfit::where('id' , '>', $request->id)->where('user_choice','=', 1)->where('status',2)->orderBy('created_at','desc')->get();
+            return response()->json(['data' => $gain_profits], 200);
+        }
+        else{
+            $gain_profits = GainProfit::where('id' , '>', $request->id)->where('status',2)->orderBy('created_at','desc')->get();
+            return response()->json(['data' => $gain_profits], 200);
+        }
     }
 
 

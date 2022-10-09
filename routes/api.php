@@ -47,8 +47,9 @@ Route::get('daily_news_add',[ApiController::class,'daily_news_add']);
 Route::get('terms_and_conditions', [ApiController::class, 'terms_and_conditions']);
 
 Route::get('support', [ApiController::class, 'support']);
-Route::post('gain_profits_add',[ApiController::class,'gain_profits_add']);
-Route::get('gain_profits_show',[ApiController::class,'gain_profits_show']);
+Route::post('gain_profit_adds',[ApiController::class,'gain_profits_add'])->name('gain_profit_adds');
+Route::get('gain_profit_shows',[ApiController::class,'gain_profits_show']);
+Route::post('gain_profit_latests',[ApiController::class,'gain_profit_latest']);
 
 Route::post('register',[RegisterController::class,'register']);
 
