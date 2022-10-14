@@ -41,7 +41,7 @@
                                 @php $i = 1 @endphp
 
                                 @foreach ($gainprofits as $gainprofit)
-                                <tr class="gradeX">
+                                <tr class="gradeX" id="{{$gainprofit->id}}">
                                     <td>{{ $i }}</td>
                                     <td>
                                         <img src="{{$gainprofit->image}}" alt="" width="100px" height="100px">
@@ -117,7 +117,8 @@
                     // console.log(data);
                     if(data.data == 'success'){
                         toastr.success('Post Has Been Approve', 'Success');
-                        location.reload();
+                        // location.reload();
+                        $('#'+id).html('');
                     }
                 }
             });
@@ -139,7 +140,8 @@
                     // console.log(data);
                     if(data.data == 'success'){
                         toastr.success('Post Has Been Deleted', 'Success');
-                        location.reload();
+                        // location.reload();
+                        $('#'+id).html('');
                     }
                 }
             });

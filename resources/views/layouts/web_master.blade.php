@@ -16,6 +16,24 @@
             background-color: lightblue;
             color: white;
         }
+
+        #nav_signal {
+
+            position: relative;
+
+        }
+
+
+
+        #nav_signal .badge {
+            position: absolute;
+            top: -1px;
+            right: -5px;
+            padding: 5px 10px;
+            border-radius: 5%;
+            background: red;
+            color: white;
+        }
     </style>
 </head>
 
@@ -24,8 +42,7 @@
     {{-- @include('layouts.second_navbar') --}}
     @include('layouts.third_navbar')
 
-    <div class="container-fluid"
-        style="background-image: linear-gradient(to
+    <div class="container-fluid" style="background-image: linear-gradient(to
       right, #f87b1c, rgba(255,249,203,168));"><br>
         @yield('content')
     </div>
@@ -42,52 +59,52 @@
 <script>
     var getToken = localStorage.getItem('token');
     var getUser = localStorage.getItem('user_data');
-    
+
     var json_parse = '';
     var user_id = '';
     var type = '';
-    if(getUser != null){
+    if (getUser != null) {
         json_parse = JSON.parse(getUser)
         user_id = json_parse.id
         type = json_parse.signal_type
-        signal_count(user_id,type,'view');
+        signal_count(user_id, type, 'view');
     }
-    function signal_count(user_id,type,action){
+
+    function signal_count(user_id, type, action) {
         // console.log('User Id'+user_id+'Type'+type+'Action'+action);
         $.ajax({
-            url : '/api/signal_notify',
+            url: '/api/signal_notify',
             headers: {
-                    'Authorization': 'Bearer ' + getToken
+                'Authorization': 'Bearer ' + getToken
             },
-            data : {
+            data: {
                 "_token": "{{ csrf_token() }}",
-                'user_id' : user_id,
-                'type' : type,
-                'action' : action,
+                'user_id': user_id,
+                'type': type,
+                'action': action,
             },
-            type : 'POST',
-            success : function(data){
+            type: 'POST',
+            success: function(data) {
                 // console.log(data.count);
-                if(data.count == 0){
+                if (data.count == 0) {
                     // $('.count').hide();
                     // console.log('No Counting');
-                    $('.count').html('');
+                    $('.badge').html('');
 
-                }
-                else{
-                    $('.count').html(data.count);
+                } else {
+                    $('.badge').html(data.count);
                 }
 
             }
         })
     }
-        
- 
+
+
     //  if (getUser != null) {
     //       var signal_data_array = '';
     //     var json_parse = JSON.parse(getUser);
     //     var signal_type = json_parse.signal_type;
-       
+
     //     function signal_notify(type){
     //         // console.log(is_notify);
     //         $.ajax({
@@ -135,7 +152,7 @@
     //     }
     //     setInterval('signal_notify(signal_type)', 5000);
 
-       
+
     // }
 
 
@@ -192,10 +209,42 @@
             }
         })
 
-        $('#nav_signal').click(function (e) {
-            e.preventDefault();
-            console.log(user_id);
+        $('#nav_signal').click(function(e) {
+            // alert('yes');
+            //     e.preventDefault();
+            // console.log(user_id);
+            $.ajax({
+                url: '/api/signal_notify',
+                headers: {
+                    'Authorization': 'Bearer ' + getToken
+                },
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    'user_id': user_id,
+                    'type': type,
+                    'action': 'update',
+                },
+                type: 'POST',
+                success: function(data) {
+                    // console.log(data.count);
+                    if (data.count == 1) {
+                        // $('.count').hide();
+                        // console.log('No Counting');
+                        $('.count').html('');
+
+                    } else {
+                        signal_count(user_id, type, 'view')
+                    }
+
+                }
+            })
+
         })
+
+
+        setInterval(function() {
+            signal_count(user_id, type, 'view');
+        }, 5000);
         // function logout() {
         //     console.log('Test');
         //     // localStorage.removeItem('user_data');
@@ -243,15 +292,13 @@
                         // else if(data.error[1] == 'undefined'){
                         //     $('#msg').html('<h5>' + data.error[0] +'</br>'+ '</h5>');
                         // }
-                        $('#msg').html('<h5>' + data.error +'</br>'+ '</h5>');
+                        $('#msg').html('<h5>' + data.error + '</br>' + '</h5>');
                         // console.log(data.message);
-                    }
-                    else if(data.message){
+                    } else if (data.message) {
                         $('#msg').html('');
                         $('#msg').show();
                         $('#msg').html('<h5>' + data.message + '</h5>');
-                    } 
-                    else {
+                    } else {
                         $('#msg').hide();
                         $('#msg').html('');
                         localStorage.setItem('token', data.token);
