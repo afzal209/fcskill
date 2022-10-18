@@ -51,6 +51,9 @@ Route::post('gain_profit_adds',[ApiController::class,'gain_profits_add'])->name(
 Route::get('gain_profit_shows',[ApiController::class,'gain_profits_show']);
 Route::post('gain_profit_latests',[ApiController::class,'gain_profit_latest']);
 
+Route::get('notification_status_views',[ApiController::class,'notification_status_view']);
+Route::post('notification_status_updates',[ApiController::class,'notification_status_update']);
+
 Route::post('register',[RegisterController::class,'register']);
 
 Route::post('login',[RegisterController::class,'login'] );

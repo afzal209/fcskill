@@ -12,6 +12,7 @@ use App\Models\PredictionIdeas;
 use App\Models\TradingTips;
 use App\Models\NotificationStatus;
 use App\Models\GainProfit;
+use App\Models\AppSetting;
 
 class ApiController extends Controller
 {
@@ -120,6 +121,19 @@ class ApiController extends Controller
 
         // }
         
+    }
+
+    public function notification_status_view(Request $request){
+        $appsetting = AppSetting::where('device_id',$request->device_id)->where('category_type',$request->category_type)->first();
+        return response()->json(['data' => $appsetting],200); 
+    }
+
+    public function notification_status_update(Request $request){
+        $appsetting = AppSetting::where('device_id' , '=', $request->device_id)->where('category_type',$request->category_type)->first();
+        $appsetting->status = $request->status;
+        $appsetting->update();
+        return response()->json(['data' => 'Notification Has Been Updated']);
+
     }
     public function prediction_ideas(Request $request){
         // return $request;

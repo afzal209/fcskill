@@ -114,10 +114,10 @@
                     },
                     success: function(data) {
 
-                        // console.log(data);
-                        toastr.success(data.doneMessage, 'Success');
+                        console.log(data);
+                        // toastr.success(data.doneMessage, 'Success');
                         // // // socket.emit('receivedSignalData', data.data);
-                        CKEDITOR.instances['signal_text'].setData('');
+                        // CKEDITOR.instances['signal_text'].setData('');
 
                     }
                 });
