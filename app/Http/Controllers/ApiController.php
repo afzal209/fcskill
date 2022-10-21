@@ -123,16 +123,32 @@ class ApiController extends Controller
         
     }
 
-    public function notification_status_view(Request $request){
-        $appsetting = AppSetting::where('device_id',$request->device_id)->where('category_type',$request->category_type)->first();
-        return response()->json(['data' => $appsetting],200); 
-    }
+    // public function notification_status_view(Request $request){
+    //     $appsetting = AppSetting::where('device_id',$request->device_id)->where('category_type',$request->category_type)->first();
+    //     return response()->json(['data' => $appsetting],200); 
+    // }
 
     public function notification_status_update(Request $request){
-        $appsetting = AppSetting::where('device_id' , '=', $request->device_id)->where('category_type',$request->category_type)->first();
-        $appsetting->status = $request->status;
-        $appsetting->update();
-        return response()->json(['data' => 'Notification Has Been Updated']);
+        if (AppSetting::where('device_id', $request->device_id)->exists()) {
+            # code...
+            $appsetting = AppSetting::where('device_id' , '=', $request->device_id)->first();
+            $appsetting->signals_status = $request->signals_status;
+            $appsetting->prediction_status = $request->prediction_status;
+            $appsetting->tips_status =  $request->tips_status;
+            $appsetting->update();
+            return response()->json(['data' => 'Notification Has Been Updated']);
+        }
+        else{
+            $appsetting = new AppSetting;
+            $appsetting->device_id = $request->device_id;
+            $appsetting->signals_status = $request->signals_status;
+            $appsetting->prediction_status = $request->prediction_status;
+            $appsetting->tips_status =  $request->tips_status;
+            $appsetting->save();
+            return response()->json(['data' => 'Notification Has Been Added']);
+
+        }
+        
 
     }
     public function prediction_ideas(Request $request){
