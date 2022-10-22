@@ -41,36 +41,58 @@ class PredictionIdeasController extends Controller
 
         if (!empty($request->prediction_type)) {
             $PredictionIdeas->prediction_type = 1;
-            $Notification->notification_text = "New forex prediction has been added";
+            $Notification->notification_text = "New forex signal has been added";
             $Notification->signal_type = 1;
         } else {
             $PredictionIdeas->prediction_type = 0;
-            $Notification->notification_text = "New crypto prediction has been added";
+            $Notification->notification_text = "New crypto signal has been added";
             $Notification->signal_type = 0;
         }
 
         $PredictionIdeas->save();
-        // $data = $Signal->signal_type;
-        // $data = [
-        //     'signal_text' => $Signal->signal_text,
-        //     'signal_type' => $Signal->signal_type,
-        // ];
-        $data = Fcm_token::join('app_settings', 'fcm_tokens.device_id', 'app_settings.device_id')->where('prediction_status', 1)->get();
-        // return $data;
-        foreach ($data as $value) {
-            if ($value->prediction_status) {
-                $Notification->signal_id = $insertedId = $PredictionIdeas->id;
-                $Notification->save();
 
-                if (!empty($request->prediction_type)) {
-                    $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
-                    $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
-                } else {
-                    $tokens = Fcm_token::where('user_choice', '!=', 0)->pluck('fcm_token')->toArray();
-                    $res = $this->send_push('Crypto Prediction', "Crypto prediction has been adde. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+        if (!empty($request->prediction_type)) {
+            // if ($value->prediction_status) {
+            $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
+            // return $tokens;
+            foreach ($tokens as $token) {
+                // print_r($token);
+                $data_check = Fcm_token::where('fcm_token', $token)->get();
+                // print($data_check);
+                foreach ($data_check as $check) {
+                    // print_r($check->device_id) ;
+                    $app_setting = AppSetting::where('device_id', $check->device_id)->where('prediction_status', 1)->get();
+                    foreach ($app_setting as $setting) {
+                        $Notification->signal_id = $insertedId = $PredictionIdeas->id;
+                        $Notification->save();
+                        // print_r($setting);
+                        $check_token = Fcm_token::where('device_id', $setting->device_id)->pluck('fcm_token')->toArray();
+
+                        $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                    }
+                }
+            }
+        } else {
+
+            $tokens = Fcm_token::where('user_choice', '!=', 0)->pluck('fcm_token')->toArray();
+            // return $tokens;
+            foreach ($tokens as $token) {
+                // print_r($token);
+                $data_check = Fcm_token::where('fcm_token', $token)->get();
+                foreach ($data_check as $check) {
+                    // print_r($check->device_id) ;
+                    $app_setting = AppSetting::where('device_id', $check->device_id)->where('prediction_status', 1)->get();
+                    foreach ($app_setting as $setting) {
+                        $Notification->signal_id = $insertedId = $PredictionIdeas->id;
+                        $Notification->save();
+                        // print_r($setting);
+                        $check_token = Fcm_token::where('device_id', $setting->device_id)->pluck('fcm_token')->toArray();
+                        $res = $this->send_push('Crypto Prediction', "Crypto prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                    }
                 }
             }
         }
+
         // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
         return redirect()->back()->with('doneMessage', 'Prediction Ideas Added!');
     }

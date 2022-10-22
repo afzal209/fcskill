@@ -98,7 +98,7 @@
                     </li>
                     <li class="{{ Request::is('admin/tradings') ? 'active' : '' }}">
                         <a href="{{ route('tradings') }}">
-                            <i class="fa fa-money"></i> <span class="nav-label">Trading Tips</span>
+                            <i class="fa fa-money"></i> <span class="nav-label">Latest Update</span>
                         </a>
                     </li>
                     @if (auth()->user()->user_role == 1)

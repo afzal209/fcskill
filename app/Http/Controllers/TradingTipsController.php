@@ -40,36 +40,59 @@ class TradingTipsController extends Controller
 
         if (!empty($request->trading_type)) {
             $TradingTips->trading_type = 1;
-            $Notification->notification_text = "New Trading Tips has been added";
+            $Notification->notification_text = "New Update has been added";
             $Notification->signal_type = 1;
         } else {
             $TradingTips->trading_type = 0;
-            $Notification->notification_text = "New Trading Tips has been added";
+            $Notification->notification_text = "New Update has been added";
             $Notification->signal_type = 0;
         }
 
         $TradingTips->save();
-        // $data = $Signal->signal_type;
-        // $data = [
-        //     'signal_text' => $Signal->signal_text,
-        //     'signal_type' => $Signal->signal_type,
-        // ];
-        $data = Fcm_token::join('app_settings', 'fcm_tokens.device_id', 'app_settings.device_id')->where('tips_status', 1)->get();
-        // return $data;
-        foreach ($data as $value) {
-            if ($value->tips_status) {
-                $Notification->signal_id = $insertedId = $TradingTips->id;
-                $Notification->save();
+       
 
-                if (!empty($request->trading_type)) {
-                    $tokens = Fcm_token::pluck('fcm_token')->toArray();
-                    $res = $this->send_push("Trading Tips", "New Trading Tips has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
-                } else {
-                    $tokens = Fcm_token::where('user_choice', '!=', 0)->pluck('fcm_token')->toArray();
-                    $res = $this->send_push('Trading Tips', "New Trading Tips has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+        if (!empty($request->trading_type)) {
+            $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
+            // return $tokens;
+            foreach ($tokens as $token) {
+                // print_r($token);
+                $data_check = Fcm_token::where('fcm_token', $token)->get();
+                // print($data_check);
+                foreach ($data_check as $check) {
+                    // print_r($check->device_id) ;
+                    $app_setting = AppSetting::where('device_id', $check->device_id)->where('tips_status', 1)->get();
+                    foreach ($app_setting as $setting) {
+                        $Notification->signal_id = $insertedId = $TradingTips->id;
+                        $Notification->save();
+                        $check_token = Fcm_token::where('device_id', $setting->device_id)->pluck('fcm_token')->toArray();
+                        // $tokens = Fcm_token::where('user_choice' , '!=', 1)->pluck('fcm_token')->toArray();
+                        // $tokens = Fcm_token::pluck('fcm_token')->toArray();
+                        $res = $this->send_push("Latest Update", "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                    }
+                }
+            }
+        } else {
+            $tokens = Fcm_token::where('user_choice', '!=', 0)->pluck('fcm_token')->toArray();
+            // return $tokens;
+            foreach ($tokens as $token) {
+                // print_r($token);
+                $data_check = Fcm_token::where('fcm_token', $token)->get();
+                foreach ($data_check as $check) {
+                    // print_r($check->device_id) ;
+                    $app_setting = AppSetting::where('device_id', $check->device_id)->where('tips_status', 1)->get();
+                    foreach ($app_setting as $setting) {
+                        $Notification->signal_id = $insertedId = $TradingTips->id;
+                        $Notification->save();
+                        $check_token = Fcm_token::where('device_id', $setting->device_id)->pluck('fcm_token')->toArray();
+                        // $tokens = Fcm_token::where('user_choice' , '!=', 0)->pluck('fcm_token')->toArray();
+                        // $tokens = Fcm_token::pluck('fcm_token')->toArray();
+                        $res = $this->send_push('Latest Update', "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                    }
                 }
             }
         }
+        // }
+        // }
         // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
         return redirect()->back()->with('doneMessage', 'Trading Tips Added!');
     }
