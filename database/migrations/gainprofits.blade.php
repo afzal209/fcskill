@@ -44,7 +44,7 @@
                                 <tr class="gradeX" id="{{$gainprofit->id}}">
                                     <td>{{ $i }}</td>
                                     <td>
-                                        <img src="{{$gainprofit->image}}" alt="" width="150px" height="150px">
+                                        <img src="{{$gainprofit->image}}" alt="" width="100px" height="100px">
                                     </td>
                                     <td>
                                         @if ($gainprofit->status == 1)
@@ -140,8 +140,8 @@
                     // console.log(data);
                     if(data.data == 'success'){
                         toastr.success('Post Has Been Deleted', 'Success');
-                        // location.reload();
-                        $('#'+id).html('');
+                        location.reload();
+                        // $('#'+id).html('');
                     }
                 }
             });

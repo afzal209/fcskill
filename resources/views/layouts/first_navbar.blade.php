@@ -164,7 +164,7 @@
                         </a>
                     </li>
                     <li id="nav_signal" class="nav-item">
-                        <a class="nav-link" href="signal-type" >
+                        <a class="nav-link" href="javascript::void(0)" onclick="signal_page();">
                             <font color="white" style="font-size:20px">Signals</font><span class="label label-pill label-danger count" style="border-radius:10px;"></span><span class="badge" ></span> 
                         </a>
                     </li>

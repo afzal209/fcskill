@@ -17,9 +17,12 @@ class AllRoles
      */
     public function handle(Request $request, Closure $next)
     {
-
+        
         if (Auth::check()) {
             return $next($request);
+        }
+        else{
+            return redirect('/login');
         }
         return redirect('/admin/dashboard');
     }

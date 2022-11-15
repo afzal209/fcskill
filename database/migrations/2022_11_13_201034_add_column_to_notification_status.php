@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('fcm_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->text('device_id');
-            $table->bigInteger('user_choice')->after('device_id')->comment('0 = Both , 1 = Forex 2 = Crypto');
-            $table->text('fcm_token');
-            $table->timestamps();
+        Schema::table('notification_statuses', function (Blueprint $table) {
+            //
+            $table->integer('flag')->after('notification_text')->default(0);
         });
     }
 
@@ -29,6 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fcm_tokens');
+        Schema::table('notification_statuses', function (Blueprint $table) {
+            //
+        });
     }
 };

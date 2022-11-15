@@ -6,6 +6,8 @@ use App\Models\PredictionIdeas;
 use App\Models\Notification;
 use App\Models\Fcm_token;
 use Carbon\Carbon;
+use App\Models\AppSetting;
+
 use Illuminate\Http\Request;
 
 class PredictionIdeasController extends Controller
@@ -50,47 +52,55 @@ class PredictionIdeasController extends Controller
         }
 
         $PredictionIdeas->save();
-
+        $Notification->signal_id = $insertedId = $PredictionIdeas->id;
+        $Notification->save();
         if (!empty($request->prediction_type)) {
-            // if ($value->prediction_status) {
-            $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
-            // return $tokens;
-            foreach ($tokens as $token) {
-                // print_r($token);
-                $data_check = Fcm_token::where('fcm_token', $token)->get();
-                // print($data_check);
-                foreach ($data_check as $check) {
-                    // print_r($check->device_id) ;
-                    $app_setting = AppSetting::where('device_id', $check->device_id)->where('prediction_status', 1)->get();
-                    foreach ($app_setting as $setting) {
-                        $Notification->signal_id = $insertedId = $PredictionIdeas->id;
-                        $Notification->save();
-                        // print_r($setting);
-                        $check_token = Fcm_token::where('device_id', $setting->device_id)->pluck('fcm_token')->toArray();
+          
+            // $tokens = Fcm_token::where('user_choice', '!=', 1)->get();
+            // foreach ($tokens as $tok) {
+            //     // print_r($tok->device_id);
+            //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+            //         $app_setting = AppSetting::where('device_id', $tok->device_id)->where('prediction_status', 1)->get();
+            //         foreach ($app_setting as $app) {
+            //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
 
-                        $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
-                    }
-                }
-            }
+            //                 $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+            //         }
+            //     }
+            //     else{
+                    $tokens = Fcm_token::where('user_choice', '!=', 1)->where('prediction_notif',1)->pluck('fcm_token')->toArray();
+                    $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+
+            //     }
+            // }
+            
         } else {
+            // $Notification->signal_id = $insertedId = $PredictionIdeas->id;
+            // $Notification->save();
+            // $tokens = Fcm_token::where('user_choice', '!=', 0)->get();
+            // foreach ($tokens as $tok) {
+            //     // print_r($tok->device_id);
+            //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+            //         // echo 'Yes';
+            //         $app_setting = AppSetting::where('device_id', $tok->device_id)->where('prediction_status', 1)->get();
+            //         foreach ($app_setting as $app) {
+            //             //             // echo 'Exist';
+            //             // print_r($app->device_id);
+            //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
+            //             // print_r($check_token);
+            //             // // //                 // $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
+            //             $res = $this->send_push('Crypto Prediction', "Crypto prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+            //         }
+            //     } else {
+            //         // echo 'No';
+                    //         // echo 'Not Exist';
+                    $tokens = Fcm_token::where('user_choice', '!=', 0)->where('prediction_notif',1)->pluck('fcm_token')->toArray();
+                    $res = $this->send_push('Crypto Prediction', "Crypto prediction has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
 
-            $tokens = Fcm_token::where('user_choice', '!=', 0)->pluck('fcm_token')->toArray();
-            // return $tokens;
-            foreach ($tokens as $token) {
-                // print_r($token);
-                $data_check = Fcm_token::where('fcm_token', $token)->get();
-                foreach ($data_check as $check) {
-                    // print_r($check->device_id) ;
-                    $app_setting = AppSetting::where('device_id', $check->device_id)->where('prediction_status', 1)->get();
-                    foreach ($app_setting as $setting) {
-                        $Notification->signal_id = $insertedId = $PredictionIdeas->id;
-                        $Notification->save();
-                        // print_r($setting);
-                        $check_token = Fcm_token::where('device_id', $setting->device_id)->pluck('fcm_token')->toArray();
-                        $res = $this->send_push('Crypto Prediction', "Crypto prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
-                    }
-                }
-            }
+                    // print_r($fcm);
+            //     }
+            // }
+          
         }
 
         // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);

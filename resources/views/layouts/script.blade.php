@@ -12,6 +12,10 @@
      integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous">
  </script>
 
+ <!--<script src="{{ asset('pagination.js')}}"></script>
+ <script src="{{ asset('pagination.min.js')}}"></script>-->
+
+
  <!-- Option 2: Separate Popper and Bootstrap JS -->
  <!--
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"

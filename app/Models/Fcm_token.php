@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Fcm_token extends Model
 {
     use HasFactory;
+    
+
 }

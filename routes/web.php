@@ -30,25 +30,25 @@ use App\Http\Controllers\GainProfitsController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/terms-and-conditions', [HomeController::class, 'termsandconditions'])->name('termsandconditions');
-Route::get('/web-register',[HomeController::class,'webregister'])->name('webregister');
+Route::get('/web-register', [HomeController::class, 'webregister'])->name('webregister');
 Route::get('/web-login', [HomeController::class, 'weblogin'])->name('weblogin');
 Route::get('/signal-type', [HomeController::class, 'signaltype'])->name('signaltype');
-Route::get('/web-setting',[HomeController::class, 'websetting'])->name('websetting');
-Route::get('/chart-web',[HomeController::class,'chartweb'])->name('chartweb');
-Route::get('/chart-web-app',[HomeController::class,'chartwebapp'])->name('chartwebapp');
-Route::get('/news-calander',[HomeController::class,'newscalander'])->name('newscalander');
-Route::get('/news-calander-app',[HomeController::class,'newscalanderapp'])->name('newscalanderapp');
-Route::get('/trading-session',[HomeController::class,'tradingsession'])->name('tradingsession');
-Route::get('/daily-news',[HomeController::class,'dailynews'])->name('dailynews');
-Route::get('/forex-brokers-ranking',[HomeController::class,'forexbrokersranking'])->name('forexbrokersranking');
-Route::get('/crypto-brokers-ranking',[HomeController::class,'cryptobrokersranking'])->name('cryptobrokersranking');
-Route::get('/technical-analysis',[HomeController::class,'technicalanalysis'])->name('technicalanalysis');
-Route::get('/fundamental-analysis',[HomeController::class,'fundamentalanalysis'])->name('fundamentalanalysis');
-Route::get('/privacy-policy-&-terms-and-conditions',[HomeController::class,'privacy'])->name('privacy');
-Route::get('/app-ads.txt',[HomeController::class,'app_ads'])->name('app_ads');
+Route::get('/web-setting', [HomeController::class, 'websetting'])->name('websetting');
+Route::get('/chart-web', [HomeController::class, 'chartweb'])->name('chartweb');
+Route::get('/chart-web-app', [HomeController::class, 'chartwebapp'])->name('chartwebapp');
+Route::get('/news-calander', [HomeController::class, 'newscalander'])->name('newscalander');
+Route::get('/news-calander-app', [HomeController::class, 'newscalanderapp'])->name('newscalanderapp');
+Route::get('/trading-session', [HomeController::class, 'tradingsession'])->name('tradingsession');
+Route::get('/daily-news', [HomeController::class, 'dailynews'])->name('dailynews');
+Route::get('/forex-brokers-ranking', [HomeController::class, 'forexbrokersranking'])->name('forexbrokersranking');
+Route::get('/crypto-brokers-ranking', [HomeController::class, 'cryptobrokersranking'])->name('cryptobrokersranking');
+Route::get('/technical-analysis', [HomeController::class, 'technicalanalysis'])->name('technicalanalysis');
+Route::get('/fundamental-analysis', [HomeController::class, 'fundamentalanalysis'])->name('fundamentalanalysis');
+Route::get('/privacy-policy-&-terms-and-conditions', [HomeController::class, 'privacy'])->name('privacy');
+Route::get('/app-ads.txt', [HomeController::class, 'app_ads'])->name('app_ads');
 
 
-Route::group(['middleware' => ['isLoggedin']], function() {
+Route::group(['middleware' => ['isLoggedin']], function () {
 	Route::get('/login', [LoginController::class, 'login']);
 	Route::get('/admin', [LoginController::class, 'login']);
 	Route::get('/admin/login', [LoginController::class, 'login']);
@@ -59,13 +59,16 @@ Route::group(['middleware' => ['isLoggedin']], function() {
 	Route::post('reset-password', [ResetPasswordController::class, 'updatePassword'])->name('update_password');
 });
 
+
+
+
 Route::group(['middleware' => ['isAllowed']], function () {
 
 	Route::get('/admin/logout', [LogoutController::class, 'logout'])->name('logout');
 	Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-	
-	
+
+
 	//Signals
 	Route::get('/admin/signals', [SignalsController::class, 'index'])->name('signals');
 	Route::get('/admin/signals/add', [SignalsController::class, 'add'])->name('add_signal');
@@ -76,7 +79,7 @@ Route::group(['middleware' => ['isAllowed']], function () {
 	Route::post('/admin/signals/image_upload', [SignalsController::class, 'upload'])->name('upload_signal_image');
 
 	// Prediction Ideas
-		
+
 	Route::get('/admin/predictions', [PredictionIdeasController::class, 'index'])->name('predictions');
 	Route::get('/admin/predictions/add', [PredictionIdeasController::class, 'add'])->name('add_predictions');
 	Route::post('/admin/predictions/store', [PredictionIdeasController::class, 'store'])->name('store_predictions');
@@ -93,17 +96,16 @@ Route::group(['middleware' => ['isAllowed']], function () {
 	Route::delete('/admin/tradings/destory/{id}', [TradingTipsController::class, 'destroy'])->name('tradings_delete');
 	Route::post('/admin/tradings/image_upload', [TradingTipsController::class, 'upload'])->name('upload_tradings_image');
 	// Gain Profit
-	
 
-	Route::get('/admin/gain_profits',[GainProfitsController::class,'index'])->name('gain_profits');
-	Route::post('/admin/gain_profits/check_gain_status',[GainProfitsController::class,'check_status'])->name('check_gain_status');
+
+	Route::get('/admin/gain_profits', [GainProfitsController::class, 'index'])->name('gain_profits');
+	Route::post('/admin/gain_profits/check_gain_status', [GainProfitsController::class, 'check_status'])->name('check_gain_status');
 	Route::delete('/admin/gain_profits/destory/{id}', [GainProfitsController::class, 'destroy'])->name('gain_profits_delete');
 	Route::get('/admin/no_access', [DashboardController::class, 'no_access'])->name('no_access');
-
 });
 
 Route::group(['middleware' => ['admin']], function () {
-	
+
 
 	//Market Education
 	Route::get('/admin/market_education', [MarketEductionsController::class, 'index'])->name('market_education');
@@ -127,15 +129,15 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::patch('/admin/update_support_details', [SettingsController::class, 'update_support_details'])->name('update_support_details');
 
 	// News
-	Route::get('/admin/news',[NewsController::class,'index'])->name('news');
+	Route::get('/admin/news', [NewsController::class, 'index'])->name('news');
 	Route::get('/admin/news/add', [NewsController::class, 'add'])->name('add_news');
 	Route::post('/admin/news/store', [NewsController::class, 'store'])->name('store_news');
 	Route::get('/admin/news/edit/{id}', [NewsController::class, 'edit'])->name('news_edit');
-	Route::patch('/admin/news/update/{id}',[NewsController::class,'update'])->name('news_update');
+	Route::patch('/admin/news/update/{id}', [NewsController::class, 'update'])->name('news_update');
 	Route::delete('/admin/news/destory/{id}', [NewsController::class, 'destroy'])->name('news_delete');
 	Route::post('/admin/news/image_upload', [NewsController::class, 'upload'])->name('upload_news_image');
-	
-	
+
+
 	//Roles
 	Route::get('/admin/roles', [RolesController::class, 'index'])->name('roles');
 	Route::get('/admin/roles/add', [RolesController::class, 'add'])->name('add_role');
@@ -143,9 +145,10 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('/admin/roles/edit/{id}', [RolesController::class, 'edit'])->name('role_edit');
 	Route::patch('/admin/roles/update/{id}', [RolesController::class, 'update'])->name('role_update');
 	Route::delete('/admin/roles/destory/{id}', [RolesController::class, 'destroy'])->name('role_delete');
-
-
 });
+
+
+
 
 
 
@@ -154,5 +157,5 @@ Route::get('/clearcache', function () {
 	$exitCode = Artisan::call('cache:clear');
 	$exitCode = Artisan::call('config:cache');
 	$exitCode = Artisan::call('view:clear');
-    return 'DONE'; //Return anything
+	return 'DONE'; //Return anything
 });

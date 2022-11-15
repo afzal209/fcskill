@@ -6,7 +6,10 @@ use App\Models\Notification;
 use App\Models\Fcm_token;
 use Carbon\Carbon;
 use App\Models\TradingTips;
+use App\Models\AppSetting;
+use DateTime;
 use Illuminate\Http\Request;
+
 
 class TradingTipsController extends Controller
 {
@@ -49,47 +52,62 @@ class TradingTipsController extends Controller
         }
 
         $TradingTips->save();
-       
+        $Notification->signal_id = $insertedId = $TradingTips->id;
+        $Notification->save();
 
         if (!empty($request->trading_type)) {
-            $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
-            // return $tokens;
-            foreach ($tokens as $token) {
-                // print_r($token);
-                $data_check = Fcm_token::where('fcm_token', $token)->get();
-                // print($data_check);
-                foreach ($data_check as $check) {
-                    // print_r($check->device_id) ;
-                    $app_setting = AppSetting::where('device_id', $check->device_id)->where('tips_status', 1)->get();
-                    foreach ($app_setting as $setting) {
-                        $Notification->signal_id = $insertedId = $TradingTips->id;
-                        $Notification->save();
-                        $check_token = Fcm_token::where('device_id', $setting->device_id)->pluck('fcm_token')->toArray();
-                        // $tokens = Fcm_token::where('user_choice' , '!=', 1)->pluck('fcm_token')->toArray();
-                        // $tokens = Fcm_token::pluck('fcm_token')->toArray();
-                        $res = $this->send_push("Latest Update", "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
-                    }
-                }
-            }
+
+            // $tokens = Fcm_token::where('user_choice', '!=', 1)->select('fcm_token', 'device_id')->get();
+            // foreach ($tokens as $tok) {
+            //     // print_r($tok->device_id);
+            //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+            //         $app_setting = AppSetting::where('device_id', $tok->device_id)->select('device_id', 'fcm_token')->where('tips_status', 1)->get();
+            //         foreach ($app_setting as $app) {
+            //             // echo 'Exist';
+            //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
+            //             // echo '<pre>'.print_r($check_token).'</pre>';
+            //             $res = $this->send_push("Latest Update", "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+            //         }
+            //     } else {
+            //         // echo 'Not Exist';
+                    $tokens = Fcm_token::where('user_choice', '!=', 1)->where('updates_notif',1)->pluck('fcm_token')->toArray();
+                    $res = $this->send_push("Latest Update", "New Update has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+                    // echo '<pre>'.print_r($fcm).'</pre>';
+            //     }
+            // }
         } else {
-            $tokens = Fcm_token::where('user_choice', '!=', 0)->pluck('fcm_token')->toArray();
-            // return $tokens;
-            foreach ($tokens as $token) {
-                // print_r($token);
-                $data_check = Fcm_token::where('fcm_token', $token)->get();
-                foreach ($data_check as $check) {
-                    // print_r($check->device_id) ;
-                    $app_setting = AppSetting::where('device_id', $check->device_id)->where('tips_status', 1)->get();
-                    foreach ($app_setting as $setting) {
-                        $Notification->signal_id = $insertedId = $TradingTips->id;
-                        $Notification->save();
-                        $check_token = Fcm_token::where('device_id', $setting->device_id)->pluck('fcm_token')->toArray();
-                        // $tokens = Fcm_token::where('user_choice' , '!=', 0)->pluck('fcm_token')->toArray();
-                        // $tokens = Fcm_token::pluck('fcm_token')->toArray();
-                        $res = $this->send_push('Latest Update', "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
-                    }
-                }
-            }
+
+            // $tokens = Fcm_token::where('user_choice', '!=', 0)->select('fcm_token', 'device_id')->get();
+            // foreach ($tokens as $tok) {
+            //     // print_r($tok->device_id);
+            //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+            //         // echo 'Yes';
+            //         $app_setting = AppSetting::where('device_id', $tok->device_id)->select('device_id', 'fcm_token')->where('tips_status', 1)->get();
+            //         // $current_date_time = Carbon::now()->timestamp;
+            //         foreach ($app_setting as $app) {
+            //             //             // echo 'Exist';
+            //             // echo 'Exist';
+            //             // print_r($app->device_id);
+            //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
+            //             // echo '<pre>'.print_r($check_token).'</pre>';
+            //             // // // //                 // $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
+            //             $res = $this->send_push('Latest Update', "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+            //         }
+            //     } else {
+            //         // echo 'No';
+            //         // echo 'Not Exist';
+
+                    //         // echo 'Not Exist';
+                    $tokens = Fcm_token::where('user_choice', '!=', 0)->where('updates_notif',1)->pluck('fcm_token')->toArray();
+                    $res = $this->send_push('Latest Update', "New Update has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+
+                    // echo '<pre>'.print_r($fcm).'</pre>';
+            //     }
+            // }
+            // $endTime = Carbon::now()->timestamp;
+            // $total = $endTime - $current_date_time;
+            // $data = Carbon::createFromTimestamp($total)->toDateTimeString();
+            // dd($data);
         }
         // }
         // }

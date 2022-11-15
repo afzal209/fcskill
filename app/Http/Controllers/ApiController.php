@@ -13,6 +13,7 @@ use App\Models\TradingTips;
 use App\Models\NotificationStatus;
 use App\Models\GainProfit;
 use App\Models\AppSetting;
+use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
@@ -20,92 +21,136 @@ class ApiController extends Controller
     public function add_fcm_token(Request $request)
     {
         if (Fcm_token::where('device_id', $request->device_id)->exists()) {
-
-            $fcm_token = Fcm_token::where('device_id' , '=', $request->device_id)->first();
-
-            $fcm_token->device_id = $request->device_id;
+            $fcm_token = Fcm_token::where('device_id', '=', $request->device_id)->first();
             $fcm_token->user_choice = $request->user_choice;
             $fcm_token->fcm_token = $request->fcm_token;
-            $fcm_token->save();
-
+            $fcm_token->update();
             return response()->json(["message" => "Records updated."], 200);
-
         } else {
-
             $fcm_token = new Fcm_token;
             $fcm_token->device_id = $request->device_id;
             $fcm_token->user_choice = $request->user_choice;
             $fcm_token->fcm_token = $request->fcm_token;
             $fcm_token->save();
-
             return response()->json(["message" => "Record created."], 200);
-
         }
+    }
 
+    public function notif_settings(Request $request)
+    {
+        if (!empty($request->device_id)) {
+            $notif_detail = Fcm_token::where('device_id', $request->device_id)->first(['signals_notif', 'prediction_notif', 'updates_notif']);
+            return response()->json(['data' => $notif_detail], 200);
+        } else {
+            return response()->json(['data' => array()], 200);
+        }
+    }
+
+    public function update_set_notif(Request $request)
+    {
+        if (!isset($request->device_id) || !isset($request->signals_notif) || !isset($request->prediction_notif) || !isset($request->updates_notif)) {
+            return response()->json(['error' => 'API parameters are missing.']);
+        } else {
+            if (Fcm_token::where('device_id', $request->device_id)->exists()) {
+                $fcm_token = Fcm_token::where('device_id', '=', $request->device_id)->first();
+                $fcm_token->signals_notif = $request->signals_notif;
+                $fcm_token->prediction_notif = $request->prediction_notif;
+                $fcm_token->updates_notif = $request->updates_notif;
+                $fcm_token->update();
+            }
+            return response()->json(['success' => 'Successfully saved.']);
+        }
     }
 
     public function signals(Request $request)
     {
-        $signals = Signal::orderBy('created_at','desc')->get();
+        $signals = Signal::orderBy('created_at', 'desc')->get();
         return response()->json(['data' => $signals], 200);
     }
     // for web
-    public function signal_check($type){
-        if($type == 0){
-            $signal_check = Signal::where('signal_type',0)->orderBy('created_at','desc')->paginate(10);
+    public function signal_check($type)
+    {
+        if ($type == 0) {
+            $signal_check = Signal::where('signal_type', 0)->orderBy('created_at', 'desc')->paginate(10);
+        } else if ($type == 1) {
+            $signal_check = Signal::where('signal_type', 1)->orderBy('created_at', 'desc')->paginate(10);
+        } else {
+            $signal_check = Signal::orderBy('created_at', 'desc')->paginate(10);
         }
-        else if($type == 1){
-            $signal_check = Signal::where('signal_type',1)->orderBy('created_at','desc')->paginate(10);
-        }
-        else{
-            $signal_check = Signal::orderBy('created_at','desc')->paginate(10);
-        }
-        return response()->json(['data' => $signal_check],200);
-        
+        return response()->json(['data' => $signal_check], 200);
     }
 
-    public function signal_notify(Request $request){
+    public function signal_notify(Request $request)
+    {
         // return $request;
         if ($request->action == 'view') {
             # code...
-            if($request->type == 0){
-                $signal_notify = NotificationStatus::where('notify',0)->where('type',0)->where('user_id',$request->user_id)->count();
+            if ($request->type == 0) {
+                // $signal_notify = NotificationStatus::where('notify',0)->where('type',0)->where('user_id',$request->user_id)->count();
+                $signal_notify = DB::table('notification_statuses')
+                    ->select(DB::raw('count(*) as user_count,notification_text, created_at'))
+                    ->where('notify', 0)->where('type', 0)->where('user_id', $request->user_id)
+                    ->groupBy('created_at','notification_text')
+                    ->get();
+            } else if ($request->type == 1) {
+                // $signal_notify = NotificationStatus::where('notify', 0)->where('type', 1)->where('user_id', $request->user_id)->count();
+                $signal_notify = DB::table('notification_statuses')
+                ->select(DB::raw('count(*) as user_count,notification_text, created_at'))
+                ->where('notify', 0)->where('type', 1)->where('user_id', $request->user_id)
+                ->groupBy('created_at','notification_text')
+                ->get();
+            } else {
+                // $signal_notify = NotificationStatus::where('notify', 0)->where('type', 2)->where('user_id', $request->user_id)->count();
+                $signal_notify = DB::table('notification_statuses')
+                ->select(DB::raw('count(*) as user_count,notification_text, created_at'))
+                ->where('notify', 0)->where('type', 2)->where('user_id', $request->user_id)
+                ->groupBy('created_at','notification_text')
+                ->get();
             }
-            else if($request->type == 1){
-                $signal_notify = NotificationStatus::where('notify',0)->where('type',1)->where('user_id',$request->user_id)->count();
+            if (!$signal_notify->isEmpty()) {
+                return response()->json(['data' => $signal_notify]);
+            } else {
+                return response()->json(['data' => 0]);
             }
-            else{
-                $signal_notify = NotificationStatus::where('notify',0)->where('type',2)->where('user_id',$request->user_id)->count();
-            }
-            if($signal_notify){
-                return response()->json(['count' => $signal_notify]);
-            }
-            else{
-                return response()->json(['count' => 0]);
-            }
-        }
-        else if($request->action == 'update'){
-            $signal_notify = NotificationStatus::where('notify',0)->where('type',$request->type)->where('user_id',$request->user_id)->get();
+        } else if ($request->action == 'update') {
+            $signal_notify = NotificationStatus::where('notify', 0)->where('type', $request->type)->where('user_id', $request->user_id)->get();
             // return $signal_notify;
-            if(!$signal_notify->isEmpty()){
+            if (!$signal_notify->isEmpty()) {
                 // echo 'Yes';
-                foreach($signal_notify as $signal_not){
+                foreach ($signal_notify as $signal_not) {
                     // print_r($signal_not['id']);
                     $update_signal_not = NotificationStatus::find($signal_not['id']);
                     // print_r($update_signal_not);    
                     $update_signal_not->notify = 1;
                     $update_signal_not->update();
-                    return response()->json(['count' => 1]);
                 }
-            }
-            else{
+                return response()->json(['count' => 1]);
+            } else {
                 // echo 'No';
                 return response()->json(['count' => 0]);
             }
-            
+
             // return '';
         }
-        
+        else if($request->action == 'flag'){
+            $signal_notify = NotificationStatus::where('flag', 0)->where('type', $request->type)->where('user_id', $request->user_id)->get();
+            // return $signal_notify;
+            if (!$signal_notify->isEmpty()) {
+                // echo 'Yes';
+                foreach ($signal_notify as $signal_not) {
+                    // print_r($signal_not['id']);
+                    $update_signal_not = NotificationStatus::find($signal_not['id']);
+                    // print_r($update_signal_not);    
+                    $update_signal_not->flag = 1;
+                    $update_signal_not->update();
+                }
+                return response()->json(['count' => 1]);
+            } else {
+                // echo 'No';
+                return response()->json(['count' => 0]);
+            }
+        }
+
         // // $signal_notify = Signal::where('is_notify',0)->where('signal_type',$notify_type)->first();
         // // return $signal_notify;
         // if($signal_notify){
@@ -113,14 +158,14 @@ class ApiController extends Controller
         //     // return $signal_update_notify;
         //     $signal_update_notify->is_notify = 1;
         //     $signal_update_notify->update();
-        
+
         // return response()->json(['data' , 1]);
         // }
         // else{
         // return response()->json(['data' , 0]);
 
         // }
-        
+
     }
 
     // public function notification_status_view(Request $request){
@@ -128,17 +173,17 @@ class ApiController extends Controller
     //     return response()->json(['data' => $appsetting],200); 
     // }
 
-    public function notification_status_update(Request $request){
+    public function notification_status_update(Request $request)
+    {
         if (AppSetting::where('device_id', $request->device_id)->exists()) {
             # code...
-            $appsetting = AppSetting::where('device_id' , '=', $request->device_id)->first();
+            $appsetting = AppSetting::where('device_id', '=', $request->device_id)->first();
             $appsetting->signals_status = $request->signals_status;
             $appsetting->prediction_status = $request->prediction_status;
             $appsetting->tips_status =  $request->tips_status;
             $appsetting->update();
             return response()->json(['data' => 'Notification Has Been Updated']);
-        }
-        else{
+        } else {
             $appsetting = new AppSetting;
             $appsetting->device_id = $request->device_id;
             $appsetting->signals_status = $request->signals_status;
@@ -146,17 +191,16 @@ class ApiController extends Controller
             $appsetting->tips_status =  $request->tips_status;
             $appsetting->save();
             return response()->json(['data' => 'Notification Has Been Added']);
-
         }
-        
-
     }
-    public function prediction_ideas(Request $request){
+    public function prediction_ideas(Request $request)
+    {
         // return $request;
-        $prediction_ideas = PredictionIdeas::orderBy('created_at','desc')->get();
-        return response()->json(['data' => $prediction_ideas],200); 
+        $prediction_ideas = PredictionIdeas::orderBy('created_at', 'desc')->get();
+        return response()->json(['data' => $prediction_ideas], 200);
     }
-    public function web_setting($text){
+    public function web_setting($text)
+    {
         return $text;
         // $web_setting_get = User::where('id',$id)->first();
         // return response()->json(['data',$web_setting_get]);
@@ -164,16 +208,14 @@ class ApiController extends Controller
 
     public function new_signals(Request $request)
     {
-        if($request->user_choice == 0){
-            $signals = Signal::where('id' , '>', $request->id)->where('signal_type','=', 0)->orderBy('created_at','desc')->get();
+        if ($request->user_choice == 0) {
+            $signals = Signal::where('id', '>', $request->id)->where('signal_type', '=', 0)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $signals], 200);
-        }
-        else if($request->user_choice == 1){
-            $signals = Signal::where('id' , '>', $request->id)->where('signal_type','=', 1)->orderBy('created_at','desc')->get();
+        } else if ($request->user_choice == 1) {
+            $signals = Signal::where('id', '>', $request->id)->where('signal_type', '=', 1)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $signals], 200);
-        }
-        else{
-            $signals = Signal::where('id' , '>', $request->id)->orderBy('created_at','desc')->get();
+        } else {
+            $signals = Signal::where('id', '>', $request->id)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $signals], 200);
         }
         // if(!empty($request->id) and !empty($request->user_choice)) {
@@ -185,20 +227,18 @@ class ApiController extends Controller
         // }
     }
 
-    
+
 
     public function new_prediction_ideas(Request $request)
     {
-        if($request->user_choice == 0){
-            $predictionideas = PredictionIdeas::where('id' , '>', $request->id)->where('prediction_type','=', 0)->orderBy('created_at','desc')->get();
+        if ($request->user_choice == 0) {
+            $predictionideas = PredictionIdeas::where('id', '>', $request->id)->where('prediction_type', '=', 0)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $predictionideas], 200);
-        }
-        else if($request->user_choice == 1){
-            $predictionideas = PredictionIdeas::where('id' , '>', $request->id)->where('prediction_type','=', 1)->orderBy('created_at','desc')->get();
+        } else if ($request->user_choice == 1) {
+            $predictionideas = PredictionIdeas::where('id', '>', $request->id)->where('prediction_type', '=', 1)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $predictionideas], 200);
-        }
-        else{
-            $predictionideas = PredictionIdeas::where('id' , '>', $request->id)->orderBy('created_at','desc')->get();
+        } else {
+            $predictionideas = PredictionIdeas::where('id', '>', $request->id)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $predictionideas], 200);
         }
         // return $request;
@@ -210,41 +250,42 @@ class ApiController extends Controller
         //     return response()->json(['data' => array() ], 200);
         // }
     }
-     public function new_trading_tips(Request $request)
+    public function new_trading_tips(Request $request)
     {
-        if(!empty($request->id)) {
-            $tradingtips = TradingTips::where('id' , '>', $request->id)->orderBy('created_at','desc')->get();
+        if (!empty($request->id)) {
+            $tradingtips = TradingTips::where('id', '>', $request->id)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $tradingtips], 200);
         } else {
-            return response()->json(['data' => array() ], 200);
+            return response()->json(['data' => array()], 200);
         }
     }
     public function forex_signals(Request $request)
     {
-        $signals = Signal::where('signal_type', 1)->orderBy('created_at','desc')->get();
+        $signals = Signal::where('signal_type', 1)->orderBy('created_at', 'desc')->get();
         return response()->json(['data' => $signals], 200);
     }
 
     public function forex_prediction(Request $request)
     {
-        $predictionideas = PredictionIdeas::where('prediction_type', 1)->orderBy('created_at','desc')->get();
+        $predictionideas = PredictionIdeas::where('prediction_type', 1)->orderBy('created_at', 'desc')->get();
         return response()->json(['data' => $predictionideas], 200);
     }
 
     public function crypto_signals(Request $request)
     {
-        $signals = Signal::where('signal_type', 0)->orderBy('created_at','desc')->get();
+        $signals = Signal::where('signal_type', 0)->orderBy('created_at', 'desc')->get();
         return response()->json(['data' => $signals], 200);
     }
 
     public function crypto_prediction(Request $request)
     {
-        $predictionideas = PredictionIdeas::where('prediction_type', 0)->orderBy('created_at','desc')->get();
+        $predictionideas = PredictionIdeas::where('prediction_type', 0)->orderBy('created_at', 'desc')->get();
         return response()->json(['data' => $predictionideas], 200);
     }
-    public function daily_news_add(){
-        $news = News::orderBy('created_at','desc')->paginate(5);
-        return response()->json(['data' => $news],200);
+    public function daily_news_add()
+    {
+        $news = News::orderBy('created_at', 'desc')->paginate(5);
+        return response()->json(['data' => $news], 200);
     }
 
     public function technical_analysis(Request $request)
@@ -253,9 +294,10 @@ class ApiController extends Controller
         return response()->json(['data' => $technical_analysis], 200);
     }
 
-    public function trading_tips(){
-        $trading_tips = TradingTips::orderBy('created_at','desc')->get();
-        return response()->json(['data' => $trading_tips],200); 
+    public function trading_tips()
+    {
+        $trading_tips = TradingTips::orderBy('created_at', 'desc')->get();
+        return response()->json(['data' => $trading_tips], 200);
     }
     public function fundamental_analysis(Request $request)
     {
@@ -280,10 +322,11 @@ class ApiController extends Controller
         $terms_and_conditions = General_option::where('meta_key', 'terms_and_conditions')->first()->meta_value;
         return response()->json(['data' => $terms_and_conditions], 200);
     }
-    public function gain_profits_add(Request $request){
+    public function gain_profits_add(Request $request)
+    {
         date_default_timezone_set('Asia/Karachi');
         // return $request;
-        if($request->hasFile('image')) {
+        if ($request->hasFile('image')) {
 
             //get filename with extension
             $filenamewithextension = $request->file('image')->getClientOriginalName();
@@ -294,17 +337,15 @@ class ApiController extends Controller
             //get file extension
             $extension = $request->file('image')->getClientOriginalExtension();
             // return $extension;
-            if($extension != "jpg" && $extension != "png" && $extension != "jpeg" && $extension != "jpeg" && $extension != "heic"){
+            if ($extension != "jpg" && $extension != "png" && $extension != "jpeg" && $extension != "jpeg" && $extension != "heic") {
                 return response()->json(['error' => 'This file format not except']);
-
-            }
-            else{
+            } else {
                 // echo 'No';
-                $filenametostore = $filename.'_'.time().'.'.$extension;
+                $filenametostore = $filename . '_' . time() . '.' . $extension;
 
                 $request->file('image')->move(public_path('assets/uploads'), $filenametostore);
 
-                $url = asset('assets/uploads/'.$filenametostore);
+                $url = asset('assets/uploads/' . $filenametostore);
 
                 $gain_profits = new GainProfit();
                 $gain_profits->device_id = $request->device_id;
@@ -314,33 +355,30 @@ class ApiController extends Controller
                 $gain_profits->updated_at = date("Y-m-d H:i:s", strtotime('now'));
                 $gain_profits->save();
                 return response()->json(['success' => 'Thanks for your post!it will publish soon as possible!']);
-
             }
-        }
-        else{
+        } else {
             return response()->json(['error' => 'Image Required']);
         }
     }
 
-    public function gain_profits_show(Request $request){
-        if($request->status == 2){
-            $gain_profits = GainProfit::where('user_choice',$request->user_choice)->where('status',$request->status)->orderBy('created_at','desc')->get();
+    public function gain_profits_show(Request $request)
+    {
+        if ($request->status == 2) {
+            $gain_profits = GainProfit::where('user_choice', $request->user_choice)->where('status', $request->status)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $gain_profits]);
-        
         }
     }
 
-    public function gain_profit_latest(Request $request){
-        if($request->user_choice == 0){
-            $gain_profits = GainProfit::where('id' , '>', $request->id)->where('user_choice','=', 0)->where('status',2)->orderBy('created_at','desc')->get();
+    public function gain_profit_latest(Request $request)
+    {
+        if ($request->user_choice == 0) {
+            $gain_profits = GainProfit::where('id', '>', $request->id)->where('user_choice', '=', 0)->where('status', 2)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $gain_profits], 200);
-        }
-        else if($request->user_choice == 1){
-            $gain_profits = GainProfit::where('id' , '>', $request->id)->where('user_choice','=', 1)->where('status',2)->orderBy('created_at','desc')->get();
+        } else if ($request->user_choice == 1) {
+            $gain_profits = GainProfit::where('id', '>', $request->id)->where('user_choice', '=', 1)->where('status', 2)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $gain_profits], 200);
-        }
-        else{
-            $gain_profits = GainProfit::where('id' , '>', $request->id)->where('status',2)->orderBy('created_at','desc')->get();
+        } else {
+            $gain_profits = GainProfit::where('id', '>', $request->id)->where('status', 2)->orderBy('created_at', 'desc')->get();
             return response()->json(['data' => $gain_profits], 200);
         }
     }
@@ -350,8 +388,6 @@ class ApiController extends Controller
     {
         $phone_number = General_option::where('meta_key', 'phone_number')->first()->meta_value;
         $support_email = General_option::where('meta_key', 'support_email')->first()->meta_value;
-        return response()->json(['data' => array('phone_number' => $support_email, 'support_email' => $support_email ) ], 200);
+        return response()->json(['data' => array('phone_number' => $support_email, 'support_email' => $support_email)], 200);
     }
-
-
 }

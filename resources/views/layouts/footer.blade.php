@@ -4,12 +4,12 @@
         <div class="col col-sm-12 col-md-12">
             <p class="text-center">
                 <img src="images/logo.png" alt="hello" width="100px" height="auto">
-                <a href="https://play.google.com/store/apps/details?id=com.fcskillapp.fcSkill"><img
+                <a href="https://play.google.com/store/apps/details?id=com.fcskillapp.fcSkill" target="__blank"><img
                         src="images/google_badge.png" alt="hello" class="px-2" width="150px" height="auto"></a>
-                <a href="https://www.instagram.com/myfcskill/" class="fa fa-instagram"></a>
-                <a href="https://twitter.com/myfcskill" class="fa fa-twitter"></a>
-                <a href="https://www.facebook.com/fcskillsupport" class="fa fa-facebook px-2"></a>
-                <a href="https://t.me/fcskillsupport" class="fa fa-telegram"></a>
+                <a href="https://www.instagram.com/myfcskill/" class="fa fa-instagram" target="__blank"></a>
+                <a href="https://twitter.com/myfcskill" class="fa fa-twitter" target="__blank"></a>
+                <a href="https://www.facebook.com/fcskillsupport" class="fa fa-facebook px-2" target="__blank"></a>
+                <a href="https://t.me/fcskillsupport" class="fa fa-telegram" target="__blank"></a>
             </p>
         </div>
         <div class="col col-sm-12 col-md-12"></div>

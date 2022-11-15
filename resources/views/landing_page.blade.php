@@ -12,7 +12,7 @@
                     Take advantage of our Forex and Crypto trading skill and <strong>Install
                         this Android App,</strong> which is used by Professional
                     Traders.</p>
-                <a href="https://play.google.com/store/apps/details?id=com.fcskillapp.fcSkill"><img
+                <a href="https://play.google.com/store/apps/details?id=com.fcskillapp.fcSkill" target="__blank"><img
                         src="{{ asset('images/google_badge.png') }}" class="ml-n1 img-fluid" alt="..." height="auto"></a>
                 <br><br>
                 <p class="fs-4">

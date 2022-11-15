@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .trading_img img{
+        
+        width: 150px !important;
+        height: 150px !important;
+
+    }
+</style>
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-sm-4">
             <h2>Latest Update</h2>
@@ -47,7 +55,7 @@
                                     @foreach ($tradingtips as $tradingtip)
                                         <tr class="gradeX">
                                             <td>{{ $i }}</td>
-                                            <td>
+                                            <td class="trading_img">
                                                 {!! $tradingtip->trading_text !!}
                                             </td>
                                             <td>
@@ -91,4 +99,7 @@
             </div>
         </div>
     </div>
+    <script>
+        
+    </script>
 @endsection
