@@ -92,7 +92,7 @@ class SignalsController extends Controller
                         NotificationStatus::create([
                             'user_id' => $signal_user->id,
                             'type' => $signal_user->signal_type,
-                            'notification_text' => 'New Crypto signal has been added'
+                            'notification_text' => 'New forex signal has been added'
                         ]);
                     }
                 } else {
@@ -109,7 +109,7 @@ class SignalsController extends Controller
                         NotificationStatus::create([
                             'user_id' => $signal_user->id,
                             'type' => $signal_user->signal_type,
-                            'notification_text' => 'New forex signal has been added'
+                            'notification_text' => 'New Crypto signal has been added'
                         ]);
                     }
                 } else {
@@ -148,7 +148,7 @@ class SignalsController extends Controller
 
             $tokens = Fcm_token::where('user_choice', '!=', 1)->where('signals_notif',1)->pluck('fcm_token')->toArray();
 
-            // $res = $this->send_push("Forex Signal", "New forex signal has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+            $res = $this->send_push("Forex Signal", "New forex signal has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
 
             //         // print_r($fcm);
             //     }
@@ -175,7 +175,7 @@ class SignalsController extends Controller
             //         // echo 'No';
                     //         // echo 'Not Exist';
             $tokens = Fcm_token::where('user_choice', '!=', 0)->where('signals_notif',1)->pluck('fcm_token')->toArray();
-            // $res = $this->send_push('Crypto Signal', "New crypto signal has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+            $res = $this->send_push('Crypto Signal', "New crypto signal has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
 
                     // print_r($fcm);
             //     }

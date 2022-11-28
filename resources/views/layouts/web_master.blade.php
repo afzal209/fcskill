@@ -72,10 +72,10 @@
 
     function signal_count(user_id, type, action) {
         var today = new Date();
-                // console.log(data.data.length);
-                var time = today.getHours() + "-" + today.getMinutes();
-                var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-                var dateTime = date + ' ' + time;
+        // console.log(data.data.length);
+        var time = today.getHours() + "-" + today.getMinutes();
+        var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+        var dateTime = date + ' ' + time;
         // console.log('User Id'+user_id+'Type'+type+'Action'+action);
         $.ajax({
             url: '/api/signal_notify',
@@ -90,24 +90,24 @@
             },
             type: 'POST',
             success: function(data) {
-                
+
                 // console.log(data);
                 if (data.data == 0) {
-                //     // $('.count').hide();
-                //     // console.log('No Counting');
+                    //     // $('.count').hide();
+                    //     // console.log('No Counting');
                     $('.badge').html('');
 
                 } else {
                     var count = data.data.length
                     // console.log(data);
-                    $.each(data.data,function(key,value){
+                    $.each(data.data, function(key, value) {
                         // console.log(value);
                         var convertToday = new Date(value['created_at']);
                         var convertTime = convertToday.getHours() + "-" + convertToday.getMinutes();
                         var convertDate = convertToday.getFullYear() + '-' + (convertToday.getMonth() + 1) + '-' + convertToday.getDate();
                         var convertDateTime = convertDate + ' ' + convertTime;
                         if (convertDateTime == dateTime) {
-                            signal_flag(user_id,type,'flag',value['notification_text']);
+                            signal_flag(user_id, type, 'flag', value['notification_text']);
                             // toastr.success(value['notification_text'], 'Success')
                         }
                     });
@@ -118,7 +118,7 @@
         })
     }
 
-    function signal_flag(user_id,type,action,message){
+    function signal_flag(user_id, type, action, message) {
         // console.log('User id:' +user_id +','+ 'Type:'+type+ 'Action'+action +'Message:'+message);
         $.ajax({
             url: '/api/signal_notify',
@@ -133,13 +133,14 @@
             },
             type: 'POST',
             success: function(data) {
-                
-                //   console.log(data);
+
+                // console.log(data);
                 if (data.count == 1) {
-                        toastr.success(message, 'Success');
-                    
+                    toastr.success(message, 'Success').delay(5000)
+                        .fadeOut(4000);
+
                 }
-                
+
 
             }
         })
@@ -216,7 +217,7 @@
         }
     }
 
-    function signal_page(){
+    function signal_page() {
         window.location.href = 'signal-type';
     }
     // const after_login = document.getElementsByClassName('after_login');
@@ -261,7 +262,7 @@
 
         $('#nav_signal').click(function(e) {
             // alert('yes');
-                e.preventDefault();
+            e.preventDefault();
             // console.log(user_id);
             $.ajax({
                 url: '/api/signal_notify',
