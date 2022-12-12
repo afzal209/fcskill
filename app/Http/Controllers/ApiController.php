@@ -13,6 +13,7 @@ use App\Models\TradingTips;
 use App\Models\NotificationStatus;
 use App\Models\GainProfit;
 use App\Models\AppSetting;
+use App\Models\Signal_User;
 use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
@@ -166,6 +167,24 @@ class ApiController extends Controller
 
         // }
 
+    }
+
+    public function check_device_id(Request $request){
+        $check_signal_user = Signal_User::where('id',$request->id)->whereNotNull('device_id')->get();
+        if ($check_signal_user->empty()) {
+            $signal_user = Signal_User::find($request->id);
+            // return $signal_user;
+            $signal_user->device_id = $request->device_id;
+            $signal_user->save();
+            return response()->json(["message" => "Records Inserted."], 200);
+        }
+        else{
+            $signal_user = Signal_User::find($request->id);
+            // return $signal_user;
+            $signal_user->device_id = $request->device_id;
+            $signal_user->update();
+            return response()->json(["message" => "Records updated."], 200);
+        }
     }
 
     // public function notification_status_view(Request $request){

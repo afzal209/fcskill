@@ -63,6 +63,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('signal_check/{type}',[ApiController::class,'signal_check']);
     Route::get('web_setting/(text}',[ApiController::class,'web_setting']);
     Route::post('signal_notify',[ApiController::class,'signal_notify']);
+    Route::post('check_device_id',[ApiController::class,'check_device_id']);
 });
 
 // Route::get('/web_setting/(text}',[ApiController::class,'web_setting']);

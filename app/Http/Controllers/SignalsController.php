@@ -79,42 +79,46 @@ class SignalsController extends Controller
         // } else {
             if (!empty($request->signal_type)) {
                 // $Signal_user = Signal_User::where('signal_type','=',0)->get();
-                $signal_users = Signal_User::where('signal_type','!=', 0)->get();
+                $signal_users = Signal_User::where('signal_type','!=', 0)->whereNotNull('device_id')->pluck('device_id')->toArray();
+                // return $signal_users;
+                $res = $this->send_push('Forex Signal', "New forex signal has been added. Click to view.", $signal_users, date('Y-m-d'), 'Fcskill');
 
                 // return  $signal_users;
-                if (!empty($signal_users)) {
-                    //     for($i = 0 ; $i < count($Signal_user) ; $i++){
-                    //         print_r($Signal_user[$i]['id']);
-                    //    }
-                    //    return '';
-                    foreach ($signal_users as $signal_user) {
-                        //dd($signal_user->id);
-                        NotificationStatus::create([
-                            'user_id' => $signal_user->id,
-                            'type' => $signal_user->signal_type,
-                            'notification_text' => 'New forex signal has been added'
-                        ]);
-                    }
-                } else {
-                    // $signal_users = Signal_User::where('signal_type',0)->get();
-                    echo 'Test';
-                }
+                // if (!empty($signal_users)) {
+                //     //     for($i = 0 ; $i < count($Signal_user) ; $i++){
+                //     //         print_r($Signal_user[$i]['id']);
+                //     //    }
+                //     //    return '';
+                //     foreach ($signal_users as $signal_user) {
+                //         //dd($signal_user->id);
+                //         NotificationStatus::create([
+                //             'user_id' => $signal_user->id,
+                //             'type' => $signal_user->signal_type,
+                //             'notification_text' => 'New forex signal has been added'
+                //         ]);
+                //     }
+                // } else {
+                //     // $signal_users = Signal_User::where('signal_type',0)->get();
+                //     echo 'Test';
+                // }
             } else{
                 //dd(Signal_User::where('signal_type',1)->get('id'));
-                $signal_users = Signal_User::where('signal_type','!=', 1)->get();
+                $signal_users = Signal_User::where('signal_type','!=', 1)->whereNotNull('device_id')->pluck('device_id')->toArray();
+                $res = $this->send_push('Crypto Signal', "New crypto signal has been added. Click to view.", $signal_users, date('Y-m-d'), 'Fcskill');
+                
                 // return $signal_users;
-                if (!empty($signal_users)) {
-                    foreach ($signal_users as $signal_user) {
-                        //dd($signal_user->id);
-                        NotificationStatus::create([
-                            'user_id' => $signal_user->id,
-                            'type' => $signal_user->signal_type,
-                            'notification_text' => 'New Crypto signal has been added'
-                        ]);
-                    }
-                } else {
-                    echo 'No Record';
-                }
+                // if (!empty($signal_users)) {
+                //     foreach ($signal_users as $signal_user) {
+                //         //dd($signal_user->id);
+                //         NotificationStatus::create([
+                //             'user_id' => $signal_user->id,
+                //             'type' => $signal_user->signal_type,
+                //             'notification_text' => 'New Crypto signal has been added'
+                //         ]);
+                //     }
+                // } else {
+                //     echo 'No Record';
+                // }
             }
         // }
 
