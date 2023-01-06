@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Mail\VerifiedEmail;
 use App\Models\Signal;
 use App\Models\Market_education;
 use App\Models\General_option;
@@ -14,7 +15,10 @@ use App\Models\NotificationStatus;
 use App\Models\GainProfit;
 use App\Models\AppSetting;
 use App\Models\Signal_User;
+use App\Models\VerifySignalUser;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 class ApiController extends Controller
 {
@@ -121,7 +125,7 @@ class ApiController extends Controller
                 foreach ($signal_notify as $signal_not) {
                     // print_r($signal_not['id']);
                     $update_signal_not = NotificationStatus::find($signal_not['id']);
-                    // print_r($update_signal_not);    
+                    // print_r($update_signal_not);
                     $update_signal_not->notify = 1;
                     $update_signal_not->update();
                 }
@@ -141,7 +145,7 @@ class ApiController extends Controller
                 foreach ($signal_notify as $signal_not) {
                     // print_r($signal_not['id']);
                     $update_signal_not = NotificationStatus::find($signal_not['id']);
-                    // print_r($update_signal_not);    
+                    // print_r($update_signal_not);
                     $update_signal_not->flag = 1;
                     $update_signal_not->update();
                 }
@@ -169,6 +173,25 @@ class ApiController extends Controller
 
     }
 
+    public function check_verified_email($id){
+        $check_verified = Signal_User::where('id',$id)->first();
+        if($check_verified->email_verified_at == null){
+            if ($check_verified->verifySignalUser == null) {
+                return response()->json(['data' => 1]);
+            }
+            else if ($check_verified->verifySignalUser->token != null){
+                return response()->json(['data' => 2]);
+            }
+
+
+            // echo 'Yes';
+        }
+
+        else{
+            // echo 'No';
+            return response()->json(['data' => 0]);
+        }
+    }
     public function check_device_id(Request $request){
         $check_signal_user = Signal_User::where('id',$request->id)->whereNotNull('device_id')->get();
         if ($check_signal_user->empty()) {
@@ -187,9 +210,33 @@ class ApiController extends Controller
         }
     }
 
+    public function verify_user(Request $request){
+        date_default_timezone_set('Asia/Karachi');
+        // return $request;
+        $signal_user = Signal_User::where('id',$request->id)->first();
+        // return $signal_user;
+        $verifysignaluser = new VerifySignalUser();
+        $verifysignaluser->user_id = $request->id;
+        $verifysignaluser->token = Str::random(60);
+        $verifysignaluser->created_at = date("Y-m-d H:i:s", strtotime('now'));
+        $verifysignaluser->updated_at = date("Y-m-d H:i:s", strtotime('now'));
+        if($verifysignaluser->save()){
+            $mail = Mail::to($signal_user->email)->send(new VerifiedEmail($signal_user));
+            if ($mail) {
+                # code...
+                return response()->json(['msg' => 'Check your email']);
+            }
+            else{
+                return response()->json(['error' => 'Email Not send']);
+            }
+        }
+        else{
+            return response()->json(['error' => 'Same thing went wrong']);
+        }
+    }
     // public function notification_status_view(Request $request){
     //     $appsetting = AppSetting::where('device_id',$request->device_id)->where('category_type',$request->category_type)->first();
-    //     return response()->json(['data' => $appsetting],200); 
+    //     return response()->json(['data' => $appsetting],200);
     // }
 
     public function notification_status_update(Request $request)

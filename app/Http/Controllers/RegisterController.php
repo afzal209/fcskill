@@ -31,6 +31,7 @@ class RegisterController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->signal_type = $request->signal_type;
+        $user->device_id = $request->device_id;
         $user->password = bcrypt($request->password);
        
         $user->save();

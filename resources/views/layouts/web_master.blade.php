@@ -256,15 +256,16 @@
             $('.after_register').show();
             $('.after_logout').hide();
         }
+        var url = '';
         var firebaseConfig = {
-                apiKey: "AIzaSyBwXDk9x0OQWXoWxQrM1B87t4HO1fNOnSk",
-                authDomain: "fcskill-3de1b.firebaseapp.com",
-                databaseURL: "https://fcskill-3de1b-default-rtdb.firebaseio.com",
-                projectId: "fcskill-3de1b",
-                storageBucket: "fcskill-3de1b.appspot.com",
-                messagingSenderId: "636149404949",
-                appId: "1:636149404949:web:d122a083e58671f5d6c51c",
-                measurementId: "G-WD5V69Z0LP"
+            apiKey: "AIzaSyBwXDk9x0OQWXoWxQrM1B87t4HO1fNOnSk",
+            authDomain: "fcskill-3de1b.firebaseapp.com",
+            databaseURL: "https://fcskill-3de1b-default-rtdb.firebaseio.com",
+            projectId: "fcskill-3de1b",
+            storageBucket: "fcskill-3de1b.appspot.com",
+            messagingSenderId: "636149404949",
+            appId: "1:636149404949:web:d122a083e58671f5d6c51c",
+            measurementId: "G-WD5V69Z0LP"
         };
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
@@ -310,7 +311,8 @@
                 console.log(error);
 
             });
-            messaging.onMessage(function (payload) {    
+            messaging.onMessage(function (payload) {  
+                // console.log(payload);  
                 const title = payload.notification.title;
                 const options = {
                     body: payload.notification.body,
@@ -318,6 +320,7 @@
                 };
                 new Notification(title, options);
             });
+            
         }
 
         
@@ -448,6 +451,17 @@
             var signal_type = $("input[name='gridRadios']:checked").val();
             // console.log('name' + name + 'email' + email + 'password' + password + 'confrim passord' +
             //     password_confirmation + 'signal type' + signal_type);
+            messaging
+            .requestPermission()
+            .then(function () {
+                return messaging.getToken()
+            })
+            .then(function (response) {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
             $.ajax({
                 url: '/api/register',
                 type: 'POST',
@@ -458,6 +472,7 @@
                     "password": password,
                     "password_confirmation": password_confirmation,
                     'signal_type': signal_type,
+                    'device_id' : response,
                 },
                 success: function(data) {
                     // console.log(data);
@@ -483,6 +498,7 @@
                 // localStorage.setItem('user_data', data.user);
                 // }
             })
+        });
         })
         $('#logo_main').on('click', function() {
             location.reload();

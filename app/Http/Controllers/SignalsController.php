@@ -297,7 +297,8 @@ class SignalsController extends Controller
             'body'         => $body,
             'smallIcon'    => 'small_icon',
             'some data'    => 'Some Data',
-            'Another Data' => 'Another Data'
+            'Another Data' => 'Another Data',
+            'click_action' => 'http://127.0.0.1:8000/signal-type',
         );
 
         $data2 = array(
@@ -320,7 +321,7 @@ class SignalsController extends Controller
 
         $headers = array();
         $headers[] = 'Content-Type: application/json';
-        $headers[] = 'Authorization: key= AAAAjnWUSGA:APA91bHHbXjwK4qGxigeKhmIOOja4UDNKr26e-1F85xATfqMSm1oRf1x5LHwjZBhHRXduGAhG_H-GdEpwq0Iwl3ykEHHwnJ-UIeqAIG88HZ876EW6bhMedLKX3r7VN8sYT1dre2JvfQx';
+        $headers[] = 'Authorization: key= AAAAlB11lRU:APA91bHdD_XofjKL_3CCCIvlR9mUpAPlSCWJHJTDi0DM93ZE7qYlOHe8EjZPoPzAXA4fjXBRP1qKu8sifE0-5AC2RcuBaR-ukryeR-fyrDambhsH6KtxWAPCiAcmEDBnYUPlYo4TVNCU';
 
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);

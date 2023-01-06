@@ -33,6 +33,7 @@ Route::get('/terms-and-conditions', [HomeController::class, 'termsandconditions'
 Route::get('/web-register', [HomeController::class, 'webregister'])->name('webregister');
 Route::get('/web-login', [HomeController::class, 'weblogin'])->name('weblogin');
 Route::get('/signal-type', [HomeController::class, 'signaltype'])->name('signaltype');
+Route::get('/signal-verify/{token}',[HomeController::class,'signalverify'])->name('signalverify');
 Route::get('/web-setting', [HomeController::class, 'websetting'])->name('websetting');
 Route::get('/chart-web', [HomeController::class, 'chartweb'])->name('chartweb');
 Route::get('/chart-web-app', [HomeController::class, 'chartwebapp'])->name('chartwebapp');

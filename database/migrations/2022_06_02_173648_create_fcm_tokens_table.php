@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('fcm_tokens', function (Blueprint $table) {
             $table->id();
             $table->text('device_id');
-            $table->bigInteger('user_choice')->after('device_id')->comment('0 = Both , 1 = Forex 2 = Crypto');
+            $table->bigInteger('user_choice')->comment('0 = Both , 1 = Forex 2 = Crypto');
             $table->text('fcm_token');
             $table->timestamps();
         });

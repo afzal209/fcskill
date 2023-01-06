@@ -85,7 +85,7 @@
                         <a href="{{ route('gain_profits') }}">
                         <i class="fa fa-get-pocket" aria-hidden="true"></i> <span class="nav-label">Gain / Profit</span>
                         </a>
-                    </li>    
+                    </li>
                     <li class="{{ Request::is('admin/signals') ? 'active' : '' }}">
                         <a href="{{ route('signals') }}">
                             <i class="fa fa-signal"></i> <span class="nav-label">Signals</span>
@@ -228,9 +228,11 @@
     @if (Request::is('admin/signals/add') || Request::is('admin/signals/edit/*'))
         <script>
             CKEDITOR.replace('signal_text', {
+                extraPlugins: 'imageuploader',
                 filebrowserUploadUrl: "{{ route('upload_signal_image', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form'
             });
+            CKEDITOR.plugins.addExternal('imageuploader', 'http://127.0.0.1:8000/vendor/unisharp/laravel-ckeditor/plugins/imageuploader/', 'plugin.js');
         </script>
     @endif
 

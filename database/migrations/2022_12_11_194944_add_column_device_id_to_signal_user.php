@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('signal__users', function (Blueprint $table) {
             //
-            $table->text('device_id')->nullable();
+            $table->text('device_id')->nullable()->after('signal_type');
         });
     }
 

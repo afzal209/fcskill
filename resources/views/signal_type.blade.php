@@ -2,6 +2,15 @@
 @section('title', 'Signal')
 @section('content')
 <div class="row">
+    <div class="alert alert-secondary text-center notify" style="display:none">
+
+    </div>
+    @if (\Session::has('doneMessage'))
+        <input type="hidden" id="donemessage" value="{{ \Session::get('doneMessage') }}">
+    @endif
+    @if (\Session::has('errorMessage'))
+        <input type="hidden" id="errormessage" value="{{ \Session::get('errorMessage') }}">
+    @endif
     <div class="col-12 col-sm-12 col-md-2 col-lg-2"></div>
     <div class="col-12 col-sm-12 col-md-8 col-lg-8">
         <h1>
@@ -113,9 +122,24 @@
             localStorage.setItem('click', 'true');
         }
 
+            var donemessage = $('#donemessage').val();
+            if (donemessage != null) {
+
+                toastr.success(donemessage, 'Success' ,{ timeOut: 3000 });
+
+            }
+
+            var errormessage = $('#errormessage').val();
+            if (errormessage != null) {
+                toastr.error(errormessage, 'Error' ,{ timeOut: 3000 });
+            }
+
+
         var getUser = localStorage.getItem('user_data');
         var json_parse = JSON.parse(getUser);
         var signal_type = json_parse.signal_type;
+        var id = json_parse.id;
+        var email = json_parse.email;
         if (signal_type == 0) {
             $('.signal_lh-1').append('Crypto Signal')
         } else if (signal_type == 1) {
@@ -290,8 +314,32 @@
 
                 }
             });
-
         });
+        $.ajax({
+                url: '/api/check_verified_email/' + id,
+                headers: {
+                    'Authorization': 'Bearer ' + getToken
+                },
+                type: 'GET',
+
+                success: function(data) {
+                    $('.notify').html('');
+                    // console.log(data);
+                    if (data.data == 1) {
+                        $('.notify').show();
+                        $('.notify').append('Kindly verify your account by clicking <button class="btn btn-primary" onclick="verify('+id+')">Verify</button> Your email :'+email);
+                    }
+                    else if(data.data == 2){
+                        $('.notify').html('');
+                        $('.notify').show();
+                        $('.notify').append('Check Your email for verification');
+                    }
+                    else{
+                        $('.notify').hide();
+                        $('.notify').html('');
+                    }
+                }
+            });
 
     });
 
@@ -339,6 +387,30 @@
         });
     }
 
+    function verify(id) {
+        // console.log(id);
+        $.ajax({
+            url : '/api/verify_user',
+            type: 'POST',
+            data : {
+                "_token": "{{ csrf_token() }}",
+                "id" : id,
+            },
+            headers: {
+                'Authorization': 'Bearer ' + getToken
+            },
+            success : function(data){
+                if (data.msg) {
+                    toastr.success(data.msg, 'Success',{ timeOut: 3000 });
+                }
+                else{
+                    toastr.error(data.error, 'Error',{ timeOut: 3000 });
+                }
+                // location.reload();
+                // console.log(data);
+            }
+        })
+    }
     function prv_page(type) {
         console.log(type);
         // var pageNoMin = selectedPageNo;
