@@ -112,7 +112,7 @@ class TradingTipsController extends Controller
         // }
         // }
         // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
-        return redirect()->back()->with('doneMessage', 'Trading Tips Added!');
+        return redirect()->back()->with('doneMessage', 'Latest Update Added!');
     }
 
     public function edit($id)

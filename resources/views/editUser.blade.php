@@ -66,7 +66,68 @@
                             <label> Confirm Password </label>
                             <input type="password" name="confirm-password" placeholder="Confirm Password" class="form-control">
                         </div>
+                        <div class="form-row ">
+                            <div class="form-group col-md-12">
+                                <label for="signal_type">Signal Type <span class="text-danger">*</span></label>
+                                <div class="i-checks">
+                                    <label>
+                                        <input type="radio" value="1"  name="signal_type" {{ ($user->signal_type == 1)? "checked" : ""}}>
+                                        <i></i> Forex Signals
+                                    </label>
+                                </div>
+                                <div class="i-checks">
+                                    <label>
+                                        <input type="radio" value="0" name="signal_type" {{ ($user->signal_type == 0)? "checked" : ""}}>
+                                        <i></i> Crypto Signals
+                                    </label>
+                                </div>
+                                <div class="i-checks">
+                                    <label>
+                                        <input type="radio" value="2" name="signal_type" {{ ($user->signal_type == 2)? "checked" : ""}}>
+                                        <i></i> Both Signals
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row ">
+                            <div class="form-group col-md-12">
+                                <label for="status">Page Permission</label>
+                                <div class="i-checks">
+                                    {{-- @dd($permission) --}}
+                                    <div class="i-checks">
+                                        <label>
+                                            <input type="checkbox" name="permission_name[]" value="gain_profit" >
+                                            <i></i> Gain/Profit
+                                        </label>
+                                    </div>
+                                    <div class="i-checks">
+                                        <label>
+                                            <input type="checkbox" name="permission_name[]" value="signal" >
+                                            <i></i> Signal
+                                        </label>
+                                    </div>
+                                    <div class="i-checks">
+                                        <label>
+                                            <input type="checkbox" name="permission_name[]" value="prediction" >
+                                            <i></i> Prediction
+                                        </label>
+                                    </div>
+                                    <div class="i-checks">
+                                        <label>
+                                            <input type="checkbox" name="permission_name[]" value="latest_update" >
+                                            <i></i> Latest Update
+                                        </label>
+                                    </div>
+                                    <div class="i-checks">
+                                        <label>
+                                            <input type="checkbox" name="permission_name[]" value="news" >
+                                            <i></i> News
+                                        </label>
+                                    </div>
 
+                                </div>
+                            </div>
+                        </div>
                         <button type="submit" class="btn btn-primary mb-1">
                             <i class="fa fa-save"></i>
                             Update

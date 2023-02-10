@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\User_Has_Permission;
 use Hash;
 use Carbon\Carbon;
 
@@ -26,27 +27,40 @@ class RolesController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
+            'signal_type' => 'required',
         ]);
-
+        // $permission_name = $request->input('permission_name');
         $request->password = Hash::make($request->password);
 
         $User = new User;
+        
         $User->name = $request->name;
         $User->email = $request->email;
         $User->password = $request->password;
         $User->user_role = 2;
         $User->email_verified_at = Carbon::now();
+        $User->signal_type = $request->signal_type;
         $User->save();
-
-        return redirect()->back()->with('doneMessage', 'User Added!');
+        if($User->save()){
+            
+            foreach($permission_name as $permission){
+                $User_Has_Permission = new User_Has_Permission;
+                $User_Has_Permission->user_id = $User->id;
+                $User_Has_Permission->permission_name = $permission;
+                $User_Has_Permission->save();
+            }
+            
+        }
+        
+        return redirect()->back()->with('doneMessage', 'User Added!');        
     }
 
     public function edit($id){
 
         $user = User::find($id);
-
+        $permission = $user->User_Has_Permission;
         if ($user) {
-            return view("editUser", compact("user"));
+            return view("editUser", compact("user","permission"));
         } else {
             return redirect('users');
         }
@@ -71,6 +85,7 @@ class RolesController extends Controller
                 $User->password = Hash::make($request->password);
             }
             $User->user_role = 2;
+            $User->signal_type = $request->signal_type;
             $User->save();
             return redirect()->back()->with('doneMessage', 'Edit Done!');
 

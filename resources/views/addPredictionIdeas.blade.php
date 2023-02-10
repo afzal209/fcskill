@@ -9,13 +9,13 @@
                     <a href="{{ route('predictions') }}">Prediction Ideas</a>
                 </li>
                 <li class="breadcrumb-item active">
-                    <strong>New Prediction Ideas</strong>
+                    <strong>New Predication Ideas</strong>
                 </li>
             </ol>
         </div>
         <div class="col-sm-8">
             <div class="title-action">
-                <a href="{{ route('predictions') }}" class="btn btn-primary">Back to Prediction Ideas</a>
+                <a href="{{ route('predictions') }}" class="btn btn-primary">Back to Prediction</a>
             </div>
         </div>
     </div>
@@ -42,19 +42,53 @@
                                 <div class="form-group col-md-12">
                                     <label for="signal_type">Prediction Ideas Type <span
                                             class="text-danger">*</span></label>
-                                    <div class="i-checks">
-
-                                        <label>
-                                            <input type="radio" value="1" checked="" name="prediction_type">
-                                            <i></i> Forex Prediction Ideas
-                                        </label>
-                                    </div>
-                                    <div class="i-checks">
-                                        <label>
-                                            <input type="radio" value="0" name="prediction_type">
-                                            <i></i> Crypto Prediction Ideas
-                                        </label>
-                                    </div>
+                                            @if(auth()->user()->id != 2)
+                                                @if(auth()->user()->signal_type == 0)   
+                                                <div class="i-checks">
+            
+                                                    <label>
+                                                        <input type="radio" value="0" checked="" name="prediction_type">
+                                                        <i></i> Forex Prediction Ideas
+                                                    </label>
+                                                </div>
+                                                @elseif(auth()->user()->signal_type == 1)
+                                                <div class="i-checks">
+            
+                                                    <label>
+                                                        <input type="radio" value="1" checked="" name="prediction_type">
+                                                        <i></i> Forex Prediction Ideas
+                                                    </label>
+                                                </div>
+                                                @else
+                                                <div class="i-checks">
+            
+                                                    <label>
+                                                        <input type="radio" value="1" checked="" name="prediction_type">
+                                                        <i></i> Forex Prediction Ideas
+                                                    </label>
+                                                </div>
+                                                <div class="i-checks">
+                                                    <label>
+                                                        <input type="radio" value="0" name="prediction_type">
+                                                        <i></i> Crypto Prediction Ideas
+                                                    </label>
+                                                </div>
+                                                @endif
+                                            @else
+                                            <div class="i-checks">
+            
+                                                    <label>
+                                                        <input type="radio" value="1" checked="" name="prediction_type">
+                                                        <i></i> Forex Prediction Ideas
+                                                    </label>
+                                            </div>
+                                            <div class="i-checks">
+                                                <label>
+                                                    <input type="radio" value="0" name="prediction_type">
+                                                    <i></i> Crypto Prediction Ideas
+                                                </label>
+                                            </div>
+                                            @endif
                                 </div>
                             </div>
 

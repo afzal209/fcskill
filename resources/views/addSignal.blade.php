@@ -41,6 +41,37 @@
                         <div class="form-row ">
                             <div class="form-group col-md-12">
                                 <label for="signal_type">Signal Type <span class="text-danger">*</span></label>
+                                @if(auth()->user()->id != 2)
+                                    @if(auth()->user()->signal_type == 0)
+                                    <div class="i-checks">
+                                        <label>
+                                            <input type="radio" value="0" checked="" name="signal_type">
+                                            <i></i> Crypto Signals
+                                        </label>
+                                    </div>
+                                    @elseif(auth()->user()->signal_type == 1)
+                                    <div class="i-checks">
+
+                                        <label>
+                                            <input type="radio" value="1" checked="" name="signal_type">
+                                            <i></i> Forex Signals
+                                        </label>
+                                    </div>
+                                    @else
+                                    <div class="i-checks">
+                                        <label>
+                                            <input type="radio" value="1" checked="" name="signal_type">
+                                            <i></i> Forex Signals
+                                        </label>
+                                    </div>
+                                    <div class="i-checks">
+                                        <label>
+                                            <input type="radio" value="0" name="signal_type">
+                                            <i></i> Crypto Signals
+                                        </label>
+                                    </div>
+                                    @endif
+                                @else
                                 <div class="i-checks">
 
                                     <label>
@@ -54,6 +85,7 @@
                                         <i></i> Crypto Signals
                                     </label>
                                 </div>
+                                @endif
                             </div>
                         </div>
                         <!-- <div class="form-row ">
@@ -95,12 +127,6 @@
         // let socket_port = '3004';
         // socket = io(ip_address + ':' + socket_port);
         // alert();
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
         $('.mb-1').click(function(e) {
             e.preventDefault();
             // alert('yes');
@@ -116,13 +142,13 @@
                     "_token": "{{ csrf_token() }}",
                     "signal_text": signal_text,
                     "signal_type": signal_type,
-                    // "status_both": status_both,
+                    // "status_both" : status_both,
                 },
                 success: function(data) {
 
                     // console.log(data);
                     toastr.success(data.doneMessage, 'Success');
-                    // // // socket.emit('receivedSignalData', data.data);
+                    // // // // socket.emit('receivedSignalData', data.data);
                     CKEDITOR.instances['signal_text'].setData('');
 
                 }
