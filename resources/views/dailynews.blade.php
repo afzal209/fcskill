@@ -4,19 +4,20 @@
     {{-- <div class="row daily-news">
 
     </div> --}}
+
     {{-- <div class="container">
         <div class="row daily-news">
 
         </div>
     </div> --}}
-    <div class="container-fluid">
-        <br>
-        <div class="row justify-content-center daily-news">
-
-        </div><br>
 
 
-    </div>
+    <div class="row justify-content-center daily-news">
+
+    </div><br>
+
+
+    {{-- </div> --}}
 
     {{-- <div class="container">
         <div class="row">
@@ -110,6 +111,8 @@
                             // '</small></p>' +
                             '       </div>' +
                             '   </div>' +
+                            ' <br>' +
+                            ' <br>' +
                             '</div>' +
                             '<div class="col-12 col-sm-12 col-md-1 col-lg-1"></div>' +
                             '<br>';
@@ -283,20 +286,23 @@
                                 '       <img src="' + srcImage +
                                 '" class="card-img-top" alt="...">' +
                                 '       <div class="card-body">' +
-                                '           <h5 class="card-title">' +
+                                '           <h5 class="card-title text-center">' +
                                 '               <a href="#">' +
-                                '                   <p style="color:#343a40">' + heading +
+                                '                   <p style="color:#343a40 ">' + heading +
                                 '</p>' +
                                 '               </a>' +
                                 '           </h5>' +
-                                '           <p class="card-text lh-sm"><small>' + para +
+                                '           <p class="card-text lh-sm text-center"><small>' +
+                                para +
                                 '</small></p>' +
-                                '           <p class="mt-n2" style="color:#343a40"><small>RTTNews | ' +
-                                moment(
-                                    new_data_array[k]['created']).startOf('hour').fromNow() +
+                                // '           <p class="mt-n2" style="color:#343a40"><small>RTTNews | ' +
+                                // moment(
+                                //     new_data_array[k]['created']).startOf('hour').fromNow() +
                                 '</small></p>' +
                                 '       </div>' +
                                 '   </div>' +
+                                '   <br>' +
+                                ' <br>' +
                                 '</div>' +
                                 '<div class="col-12 col-sm-12 col-md-1 col-lg-1"></div>' +
                                 '<br>';

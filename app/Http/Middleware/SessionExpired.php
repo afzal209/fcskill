@@ -3,26 +3,27 @@
 namespace App\Http\Middleware;
 
 use Closure;
-
+use Illuminate\Http\Request;
 use Illuminate\Session\Store;
+use Auth;
+use Session;
 class SessionExpired
 {
-
     protected $session;
     protected $timeout = 1800;
-
-    public function __construct(Store $session){
-        $this->session = $session;
-    }
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle($request, Closure $next)
+    public function __construct(Store $session){
+        $this->session = $session;
+    }
+    public function handle(Request $request, Closure $next)
     {
+        // return $next($request);
         $isLoggedIn = $request->path() != '/admin/logout';
         if(! session('lastActivityTime'))
             $this->session->put('lastActivityTime', time());

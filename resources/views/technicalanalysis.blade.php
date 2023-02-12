@@ -4,16 +4,16 @@
 
     <div class="container">
         <div class="row">
-            <div class="col technical">
+            <div class="col-12 technical">
 
             </div>
         </div>
     </div>
     {{-- <div class="container">
         <div class="row">
-            <div class="col"></div>
-            <div class="col"><img src="{{ asset('images/blog1.png') }}" width="100%" height="auto"></div>
-            <div class="col"></div>
+            <div class="col-12"></div>
+            <div class="col-12"><img src="{{ asset('images/blog1.png') }}" class = "img-fluid" width="100%" height="auto"></div>
+            <div class="col-12"></div>
         </div><br>
     </div> --}}
 

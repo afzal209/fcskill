@@ -63,6 +63,9 @@
                     </div>
                 </div>
             </div>
+            {{-- for Web View --}}
+
+
         </div>
         <div class="row animated fadeInRightBig">
 
@@ -94,7 +97,7 @@
                         <h5>Crypto Users</h5>
                     </div>
                     <div class="ibox-content">
-                        <h1 class="no-margins">{{ $web_both_users }}</h1>
+                        <h1 class="no-margins">{{ $web_crypto_users }}</h1>
                         {{-- <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i></div> --}}
                         <small>Total</small>
                     </div>

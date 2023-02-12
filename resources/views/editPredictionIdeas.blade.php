@@ -9,7 +9,7 @@
                     <a href="{{ route('predictions') }}">Prediction Ideas</a>
                 </li>
                 <li class="breadcrumb-item active">
-                    <strong>Update Prediction Ideas</strong>
+                    <strong>Update Predication Ideas</strong>
                 </li>
             </ol>
         </div>

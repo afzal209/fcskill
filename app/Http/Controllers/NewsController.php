@@ -26,6 +26,7 @@ class NewsController extends Controller
 
             return redirect()->back()->with('doneMessage', 'Successfully saved.');
     }
+
     public function edit($id){
 
         $new = News::find($id);
@@ -36,7 +37,7 @@ class NewsController extends Controller
             return redirect('news');
         }
     }
-
+    
     public function update(Request $request,$id){
          $new = News::find($id);
 
@@ -98,6 +99,4 @@ class NewsController extends Controller
 
         }
     }
-
-
 }

@@ -87,9 +87,9 @@
                 </p>
             </div>
             <div class="col-12 col-sm-12 col-md-12 col-lg-4 mt-5 ">
-                <a href="javascript:void(0);" class="reload"><img src="{{ asset('images/Untitled-design(14).png') }}"
+                <a href="javascript:void(0);" class="reload"><img src="{{ asset('images/500600(4).png') }}"
                         class="responsive
-              image-fluid"></a>
+              image-fluid"></a><br><br>
             </div>
         </div>
     </div>

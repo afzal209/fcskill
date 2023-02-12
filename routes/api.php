@@ -23,6 +23,9 @@ use App\Http\Controllers\RegisterController;
 
 Route::post('add_fcm_token', [ApiController::class, 'add_fcm_token'], 'add_fcm_token');
 
+Route::post('notif_settings', [ApiController::class, 'notif_settings'])->name('notif_settings');
+Route::post('update_set_notif', [ApiController::class, 'update_set_notif'])->name('update_set_notif');
+
 Route::get('signals', [ApiController::class, 'signals']);
 Route::post('new_signals', [ApiController::class, 'new_signals'])->name('new_signals');
 Route::get('prediction_ideas',[ApiController::class,'prediction_ideas']);
@@ -54,18 +57,18 @@ Route::post('gain_profit_latests',[ApiController::class,'gain_profit_latest']);
 Route::get('notification_status_views',[ApiController::class,'notification_status_view']);
 Route::post('notification_status_updates',[ApiController::class,'notification_status_update']);
 
+
 Route::post('register',[RegisterController::class,'register']);
 
 Route::post('login',[RegisterController::class,'login'] );
-// Route::group(['middleware' => ['auth:sanctum']], function () {
-Route::middleware('auth:sanctum')->group( function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
 
-    Route::get('signal_check/{type}',[ApiController::class,'signal_check']);
-    Route::get('web_setting/(text}',[ApiController::class,'web_setting']);
-    Route::post('signal_notify',[ApiController::class,'signal_notify']);
-    Route::post('check_device_id',[ApiController::class,'check_device_id']);
-    Route::get('check_verified_email/{id}',[ApiController::class,'check_verified_email']);
-    Route::post('verify_user',[ApiController::class,'verify_user']);
+Route::get('signal_check/{type}',[ApiController::class,'signal_check']);
+Route::get('/web_setting/(text}',[ApiController::class,'web_setting']);
+Route::post('signal_notify',[ApiController::class,'signal_notify']);
+Route::post('check_device_id',[ApiController::class,'check_device_id']);
+Route::get('check_verified_email/{id}',[ApiController::class,'check_verified_email']);
+Route::post('verify_user',[ApiController::class,'verify_user']);
 });
 
-// Route::get('/web_setting/(text}',[ApiController::class,'web_setting']);
+Route::get('/web_setting/(text}',[ApiController::class,'web_setting']);

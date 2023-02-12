@@ -69,7 +69,7 @@ class HomeController extends Controller
     public function technicalanalysis(){
         return view('technicalanalysis');
     }
-
+    
     public function fundamentalanalysis(){
         return view('fundamentalanalysis');
     }
@@ -87,57 +87,63 @@ class HomeController extends Controller
         $verify_signal_user = VerifySignalUser::where('token',$token)->first();
         // $create_at = date("Y-m-d H:i:s", strtotime($verify_signal_user->created_at));
         // return $verify_signal_user->signalUser;
-        $create = Carbon::createFromFormat('Y-m-d H:i:s', $verify_signal_user->created_at);
-        // return $create->toDateString();
-        $current = Carbon::now()->toDateTimeString();
-        $diff = $create->diffInMinutes($current);
-        // return $diff;
-        $date = $create->toDateString();
-        // return $date;
+        if (isset($verify_signal_user)) {
+            # code...
+            $create = Carbon::createFromFormat('Y-m-d H:i:s', $verify_signal_user->created_at);
+            // return $create->toDateString();
+            $current = Carbon::now()->toDateTimeString();
+            $diff = $create->diffInMinutes($current);
+            // return $diff;
+            $date = $create->toDateString();
+            // return $date;
 
-        if (date("Y-m-d") === $date ) {
-            # code...
-             if ($diff < 5 ) {
-            # code...
-                // echo 'Available';
-                if (isset($verify_signal_user)) {
-                //     # code...
-                    $user = $verify_signal_user->signalUser;
-                    // return $user;
-                    if (!$user->email_verified_at) {
-                        # code...
-                        $user->email_verified_at = date("Y-m-d H:i:s", strtotime('now'));
-                        $user->save();
-                        return redirect('signal-type')->with('doneMessage','Your Email has been verified');
+            if (date("Y-m-d") === $date ) {
+                # code...
+                if ($diff < 5 ) {
+                # code...
+                    // echo 'Available';
+                    if (isset($verify_signal_user)) {
+                    //     # code...
+                        $user = $verify_signal_user->signalUser;
+                        // return $user;
+                        if (!$user->email_verified_at) {
+                            # code...
+                            $user->email_verified_at = date("Y-m-d H:i:s", strtotime('now'));
+                            $user->save();
+                            return redirect('signal-type')->with('doneMessage','Your Email has been verified');
+                        }
+                        else{
+                            return redirect('signal-type')->with('doneMessage','Already Verified');
+                        }
                     }
-                    else{
-                        return redirect('signal-type')->with('doneMessage','Already Verified');
-                    }
+                }
+                else{
+                    return redirect('signal-type')->with('errorMessage','Expired');
+                    // echo 'Expired';
                 }
             }
             else{
-                return redirect('signal-type')->with('errorMessage','Expired');
-                // echo 'Expired';
+                $verify_signal_user = VerifySignalUser::where('token',$token)->first();
+                // return $verify_signal_user->signalUser;
+                if (is_null($verify_signal_user->signalUser->email_verified_at)) {
+                    # code...
+                    // echo 'Null';
+                    $verify_signal_user->delete();
+                    return redirect('signal-type')->with('errorMessage','Kindly send verify link again by clicking on verify Button');
+                }
+                else{
+                    return redirect('signal-type')->with('doneMessage','Already Verified');
+                    // echo 'Not Null';
+                }
             }
         }
         else{
-            $verify_signal_user = VerifySignalUser::where('token',$token)->first();
-            // return $verify_signal_user->signalUser;
-            if (is_null($verify_signal_user->signalUser->email_verified_at)) {
-                # code...
-                // echo 'Null';
-                $verify_signal_user->delete();
-                return redirect('signal-type')->with('errorMessage','Kindly send verify link again by clicking on verify Button');
-            }
-            else{
-                return redirect('signal-type')->with('doneMessage','Already Verified');
-                // echo 'Not Null';
-            }
+            return redirect('signal-type')->with('errorMessage','Link Expired');
         }
+
 
         // $a = strptime($create_at , '%Y-%m-%d');
         // $timestamp = mktime(0, 0, 0, $a['tm_mon']+1, $a['tm_mday'], $a['tm_year']+1900);
         // return $timestamp;
     }
-
 }

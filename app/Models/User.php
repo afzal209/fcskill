@@ -41,4 +41,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function User_Has_Permission(){
+        return $this->hasMany(User_Has_Permission::class);
+    }
 }
