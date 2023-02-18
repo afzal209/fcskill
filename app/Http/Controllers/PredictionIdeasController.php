@@ -6,6 +6,7 @@ use App\Models\PredictionIdeas;
 use App\Models\Notification;
 use App\Models\Fcm_token;
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\AppSetting;
 
 use Illuminate\Http\Request;
@@ -15,8 +16,48 @@ class PredictionIdeasController extends Controller
     //
     public function index()
     {
-        $predictionideas = PredictionIdeas::orderBy('created_at', 'desc')->get();
-        return view('predictionideas', compact('predictionideas'));
+        if (auth()->user()->user_role == 1) {
+            # code...
+            $predictionideas = PredictionIdeas::orderBy('created_at', 'desc')->get();
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    if (auth()->user()->signal_type == 0) {
+                        $predictionideas = PredictionIdeas::where('prediction_type', 0)->orderBy('created_at', 'desc')->get();
+                    }
+                    elseif (auth()->user()->signal_type == 1) {
+                        $predictionideas = PredictionIdeas::where('prediction_type', 1)->orderBy('created_at', 'desc')->get();
+                    }
+                    else{
+                        $predictionideas = PredictionIdeas::orderBy('created_at', 'desc')->get();
+                    }
+                    return view('predictionideas', compact('predictionideas'));
+
+                }
+                
+            }
+            
+            // $user = User::find(auth()->user()->id);
+            // $permission = $user->user_has_permssion;
+            // if ($permission == null) {
+            //     return redirect('/admin/no_access');
+            // }
+            // else{
+            // }
+
+        }
     }
 
     public function add()

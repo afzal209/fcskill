@@ -81,27 +81,74 @@
                             </a>
                         </li>
                     @endif --}}
-                    <li class="{{ Request::is('admin/gain_profits') ? 'active' : '' }}">
-                        <a href="{{ route('gain_profits') }}">
-                        <i class="fa fa-get-pocket" aria-hidden="true"></i> <span class="nav-label">Gain / Profit</span>
-                        </a>
-                    </li>
-                    <li class="{{ Request::is('admin/signals') ? 'active' : '' }}">
-                        <a href="{{ route('signals') }}">
-                            <i class="fa fa-signal"></i> <span class="nav-label">Signals</span>
-                        </a>
-                    </li>
-                    <li class="{{ Request::is('admin/predictions') ? 'active' : '' }}">
-                        <a href="{{ route('predictions') }}">
-                            <i class="fa fa-lightbulb-o"></i> <span class="nav-label">Prediction Ideas</span>
-                        </a>
-                    </li>
-                    <li class="{{ Request::is('admin/tradings') ? 'active' : '' }}">
-                        <a href="{{ route('tradings') }}">
-                            <i class="fa fa-money"></i> <span class="nav-label">Latest Update</span>
-                        </a>
-                    </li>
+                    @php
+                        use App\Models\User;
+                        use App\Models\User_Has_Permission;
+                    @endphp
+                        @if (auth()->user()->user_role == 2) 
+                           @php 
+                            $user = User::find(auth()->user()->id);
+                            $permission = $user->User_Has_Permission->pluck('permission_id')->toArray(); 
+                            @endphp
+                            @foreach ($permission as $key => $value) {
+                                @if ($value == 1) 
+                                <li class="{{ Request::is('admin/gain_profits') ? 'active' : '' }}">
+                                    <a href="{{ route('gain_profits') }}">
+                                    <i class="fa fa-get-pocket" aria-hidden="true"></i> <span class="nav-label">Gain / Profit</span>
+                                    </a>
+                                </li>
+                                @elseif($value == 2)
+                                <li class="{{ Request::is('admin/signals') ? 'active' : '' }}">
+                                    <a href="{{ route('signals') }}">
+                                        <i class="fa fa-signal"></i> <span class="nav-label">Signals</span>
+                                    </a>
+                                </li>
+                                @elseif($value == 3)
+                                <li class="{{ Request::is('admin/predictions') ? 'active' : '' }}">
+                                    <a href="{{ route('predictions') }}">
+                                        <i class="fa fa-lightbulb-o"></i> <span class="nav-label">Prediction Ideas</span>
+                                    </a>
+                                </li>
+                                @elseif($value == 4)
+                                <li class="{{ Request::is('admin/tradings') ? 'active' : '' }}">
+                                    <a href="{{ route('tradings') }}">
+                                        <i class="fa fa-money"></i> <span class="nav-label">Latest Update</span>
+                                    </a>
+                                </li>
+                                @elseif($value == 5)
+                                <li class="{{ Request::is('admin/news') ? 'active' : '' }}">
+                                    <a href="{{ route('news') }}">
+                                        <i class="fa fa-newspaper-o"></i> <span class="nav-label">News</span>
+                                    </a>
+                                </li>
+                                @endif
+                            @endforeach
+                        @endif
+                        
+                        
+                    
+                    
                     @if (auth()->user()->user_role == 1)
+                        <li class="{{ Request::is('admin/gain_profits') ? 'active' : '' }}">
+                            <a href="{{ route('gain_profits') }}">
+                            <i class="fa fa-get-pocket" aria-hidden="true"></i> <span class="nav-label">Gain / Profit</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('admin/signals') ? 'active' : '' }}">
+                            <a href="{{ route('signals') }}">
+                                <i class="fa fa-signal"></i> <span class="nav-label">Signals</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('admin/predictions') ? 'active' : '' }}">
+                            <a href="{{ route('predictions') }}">
+                                <i class="fa fa-lightbulb-o"></i> <span class="nav-label">Prediction Ideas</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('admin/tradings') ? 'active' : '' }}">
+                            <a href="{{ route('tradings') }}">
+                                <i class="fa fa-money"></i> <span class="nav-label">Latest Update</span>
+                            </a>
+                        </li>
                         <li class="{{ Request::is('admin/market_education') ? 'active' : '' }}">
                             <a href="{{ route('market_education') }}">
                                 <i class="fa fa-graduation-cap"></i> <span class="nav-label">Market Education</span>

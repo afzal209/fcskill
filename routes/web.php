@@ -104,6 +104,15 @@ Route::group(['middleware' => ['auth.session']], function () {
 		Route::post('/admin/gain_profits/check_gain_status', [GainProfitsController::class, 'check_status'])->name('check_gain_status');
 		Route::delete('/admin/gain_profits/destory/{id}', [GainProfitsController::class, 'destroy'])->name('gain_profits_delete');
 
+
+		Route::get('/admin/news', [NewsController::class, 'index'])->name('news');
+		Route::get('/admin/news/add', [NewsController::class, 'add'])->name('add_news');
+		Route::post('/admin/news/store', [NewsController::class, 'store'])->name('store_news');
+		Route::get('/admin/news/edit/{id}', [NewsController::class, 'edit'])->name('news_edit');
+		Route::patch('/admin/news/update/{id}', [NewsController::class, 'update'])->name('news_update');
+		Route::delete('/admin/news/destory/{id}', [NewsController::class, 'destroy'])->name('news_delete');
+		Route::post('/admin/news/image_upload', [NewsController::class, 'upload'])->name('upload_news_image');
+		
 		Route::get('/admin/no_access', [DashboardController::class, 'no_access'])->name('no_access');
 	});
 
@@ -132,13 +141,13 @@ Route::group(['middleware' => ['auth.session']], function () {
 		Route::patch('/admin/update_support_details', [SettingsController::class, 'update_support_details'])->name('update_support_details');
 
 		// News
-		Route::get('/admin/news', [NewsController::class, 'index'])->name('news');
-		Route::get('/admin/news/add', [NewsController::class, 'add'])->name('add_news');
-		Route::post('/admin/news/store', [NewsController::class, 'store'])->name('store_news');
-		Route::get('/admin/news/edit/{id}', [NewsController::class, 'edit'])->name('news_edit');
-		Route::patch('/admin/news/update/{id}', [NewsController::class, 'update'])->name('news_update');
-		Route::delete('/admin/news/destory/{id}', [NewsController::class, 'destroy'])->name('news_delete');
-		Route::post('/admin/news/image_upload', [NewsController::class, 'upload'])->name('upload_news_image');
+		// Route::get('/admin/news', [NewsController::class, 'index'])->name('news');
+		// Route::get('/admin/news/add', [NewsController::class, 'add'])->name('add_news');
+		// Route::post('/admin/news/store', [NewsController::class, 'store'])->name('store_news');
+		// Route::get('/admin/news/edit/{id}', [NewsController::class, 'edit'])->name('news_edit');
+		// Route::patch('/admin/news/update/{id}', [NewsController::class, 'update'])->name('news_update');
+		// Route::delete('/admin/news/destory/{id}', [NewsController::class, 'destroy'])->name('news_delete');
+		// Route::post('/admin/news/image_upload', [NewsController::class, 'upload'])->name('upload_news_image');
 
 
 		//Roles

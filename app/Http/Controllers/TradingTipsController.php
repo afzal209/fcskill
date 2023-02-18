@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\TradingTips;
 use App\Models\AppSetting;
 use DateTime;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 
@@ -15,8 +16,41 @@ class TradingTipsController extends Controller
 {
     public function index()
     {
-        $tradingtips = TradingTips::orderBy('created_at', 'desc')->get();
-        return view('tradingtips', compact('tradingtips'));
+        if (auth()->user()->user_role == 1) {
+            # code...
+            $tradingtips = TradingTips::orderBy('created_at', 'desc')->get();
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    // dd('No');
+                    if (auth()->user()->signal_type == 0) {
+                        $tradingtips = TradingTips::where('trading_type',0)->orderBy('created_at', 'desc')->get();
+                    }
+                    elseif (auth()->user()->signal_type == 1) {
+                        $tradingtips = TradingTips::where('trading_type',1)->orderBy('created_at', 'desc')->get();
+                    }else{
+                        $tradingtips = TradingTips::orderBy('created_at', 'desc')->get();
+                    }
+                    return view('tradingtips', compact('tradingtips'));
+
+                }
+            }
+        }
+            
+        
     }
 
     public function add()

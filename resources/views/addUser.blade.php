@@ -94,14 +94,15 @@
                             <div class="form-group col-md-12">
                                 <label for="status">Page Permission</label>
                                 <div class="i-checks">
-
+                                    @foreach($permission as $key => $permission_value)
                                     <div class="i-checks">
                                         <label>
-                                            <input type="checkbox" name="permission_name[]" value="gain_profit" >
-                                            <i></i> Gain/Profit
+                                            <input type="checkbox" name="permission_id[]" value="{{$permission_value->id}}" >
+                                            <i></i>{{$permission_value->permission_name}}
                                         </label>
                                     </div>
-                                    <div class="i-checks">
+                                    @endforeach
+                                    {{-- <div class="i-checks">
                                         <label>
                                             <input type="checkbox" name="permission_name[]" value="signal" >
                                             <i></i> Signal
@@ -124,7 +125,7 @@
                                             <input type="checkbox" name="permission_name[]" value="news" >
                                             <i></i> News
                                         </label>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>

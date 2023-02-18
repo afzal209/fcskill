@@ -147,9 +147,17 @@
                 success: function(data) {
 
                     // console.log(data);
-                    toastr.success(data.doneMessage, 'Success');
-                    // // // // socket.emit('receivedSignalData', data.data);
-                    CKEDITOR.instances['signal_text'].setData('');
+                    if (data.access == 1) {
+                        window.location.href = '/admin/no_access';
+                    }
+                    else{
+                        toastr.success(data.doneMessage, 'Success');
+                        // // // // socket.emit('receivedSignalData', data.data);
+                        CKEDITOR.instances['signal_text'].setData('');
+                    }
+                    // toastr.success(data.doneMessage, 'Success');
+                    // // // // // socket.emit('receivedSignalData', data.data);
+                    // CKEDITOR.instances['signal_text'].setData('');
 
                 }
             });

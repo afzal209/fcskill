@@ -4,11 +4,33 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\News;
+use App\Models\User;
 class NewsController extends Controller
 {
     //
     public function index(){
-        $news = News::orderBy('created_at','desc')->get();
+        if (auth()->user()->user_role == 1) {
+            $news = News::orderBy('created_at','desc')->get();
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                // echo 'TEst';
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    $news = News::orderBy('created_at','desc')->get();
+                }
+            }
+        }
         return view('news',compact('news'));
     }
     public function add(){

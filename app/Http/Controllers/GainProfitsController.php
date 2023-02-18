@@ -4,12 +4,33 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\GainProfit;
-
+use App\Models\User;
 class GainProfitsController extends Controller
 {
     //
     public function index(){
-        $gainprofits = GainProfit::orderBy('created_at','desc')->get();
+        if (auth()->user()->user_role == 1) {
+            $gainprofits = GainProfit::orderBy('created_at','desc')->get();
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                // echo 'TEst';
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',1);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    $gainprofits = GainProfit::orderBy('created_at','desc')->get();
+                } 
+            }
+        }
         return view('gainprofits',compact('gainprofits'));
     }
     // public function index_demo(){
