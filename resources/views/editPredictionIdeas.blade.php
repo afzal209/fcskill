@@ -44,6 +44,41 @@
                                 <div class="form-group col-md-12">
                                     <label for="signal_type">Prediction Ideas Type <span
                                             class="text-danger">*</span></label>
+                                    @if(auth()->user()->id != 2)
+                                        @if(auth()->user()->signal_type == 0)
+                                        <div class="i-checks">
+                                            <label>
+                                                <input type="radio" value="0"
+                                                    @if ($predictionideas->prediction_type == 0) checked="" @endif name="prediction_type">
+                                                <i></i> Crypto Prediction Ideas
+                                            </label>
+                                        </div>
+                                        @elseif(auth()->user()->signal_type == 1)
+                                        <div class="i-checks">
+                                            <label>
+                                                <input type="radio" value="1"
+                                                    @if ($predictionideas->prediction_type == 1) checked="" @endif name="prediction_type">
+                                                <i></i> Forex Prediction Ideas
+                                            </label>
+                                        </div>
+                                        @else
+                                        <div class="i-checks">
+
+                                            <label>
+                                                <input type="radio" value="1"
+                                                    @if ($predictionideas->prediction_type == 1) checked="" @endif name="prediction_type">
+                                                <i></i> Forex Prediction Ideas
+                                            </label>
+                                        </div>
+                                        <div class="i-checks">
+                                            <label>
+                                                <input type="radio" value="0"
+                                                    @if ($predictionideas->prediction_type == 0) checked="" @endif name="prediction_type">
+                                                <i></i> Crypto Prediction Ideas
+                                            </label>
+                                        </div>
+                                        @endif
+                                    @else
                                     <div class="i-checks">
 
                                         <label>
@@ -59,6 +94,7 @@
                                             <i></i> Crypto Prediction Ideas
                                         </label>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="form-row ">

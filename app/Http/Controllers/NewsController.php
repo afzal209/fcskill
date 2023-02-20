@@ -11,6 +11,7 @@ class NewsController extends Controller
     public function index(){
         if (auth()->user()->user_role == 1) {
             $news = News::orderBy('created_at','desc')->get();
+            return view('news',compact('news'));
         }
         else{
             $user = User::find(auth()->user()->id);
@@ -28,16 +29,39 @@ class NewsController extends Controller
                 }
                 else{
                     $news = News::orderBy('created_at','desc')->get();
+                    return view('news',compact('news'));
                 }
             }
         }
-        return view('news',compact('news'));
     }
     public function add(){
-        return view("addNews");
+
+        if (auth()->user()->user_role == 1) {
+            return view("addNews");
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                // echo 'TEst';
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    return view("addNews");
+                }
+            }
+        }
     }
 
     public function store(Request $request){
+        if (auth()->user()->user_role == 1) {
             $this->validate($request, [
                 'news_text' => 'required'
             ]);
@@ -47,48 +71,168 @@ class NewsController extends Controller
             $news->save();
 
             return redirect()->back()->with('doneMessage', 'Successfully saved.');
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                // echo 'TEst';
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    $this->validate($request, [
+                        'news_text' => 'required'
+                    ]);
+                    
+                    $news = new News;
+                    $news->news_text = $request->news_text;
+                    $news->save();
+        
+                    return redirect()->back()->with('doneMessage', 'Successfully saved.');
+                }
+            }
+            
+        }
     }
 
     public function edit($id){
 
-        $new = News::find($id);
+        if (auth()->user()->user_role == 1) {
+            $new = News::find($id);
 
-        if ($new) {
-            return view("editNews", compact("new"));
-        } else {
-            return redirect('news');
+            if ($new) {
+                return view("editNews", compact("new"));
+            } else {
+                return redirect('news');
+            }
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                // echo 'TEst';
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    $new = News::find($id);
+                    if ($new) {
+                        return view("editNews", compact("new"));
+                    } else {
+                        return redirect('news');
+                    }
+                }
+            }
         }
     }
     
     public function update(Request $request,$id){
-         $new = News::find($id);
+        if (auth()->user()->user_role == 1) {
+            $new = News::find($id);
 
-        if($new){
+            if($new){
 
-            $this->validate($request, [
-                'news_text' => 'required',
-            ]);
+                $this->validate($request, [
+                    'news_text' => 'required',
+                ]);
 
-            $new->news_text = $request->news_text;
-            $new->updated_at = date("Y-m-d H:i:s", strtotime('now'));
+                $new->news_text = $request->news_text;
+                $new->updated_at = date("Y-m-d H:i:s", strtotime('now'));
 
 
-            $new->save();
+                $new->save();
 
-            return redirect()->back()->with('doneMessage', 'Edit Done!');
-        } else {
-            return redirect('news');
+                return redirect()->back()->with('doneMessage', 'Edit Done!');
+            } else {
+                return redirect('news');
+            }
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                // echo 'TEst';
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    $new = News::find($id);
+
+                    if($new){
+
+                        $this->validate($request, [
+                            'news_text' => 'required',
+                        ]);
+
+                        $new->news_text = $request->news_text;
+                        $new->updated_at = date("Y-m-d H:i:s", strtotime('now'));
+
+
+                        $new->save();
+
+                        return redirect()->back()->with('doneMessage', 'Edit Done!');
+                    } else {
+                        return redirect('news');
+                    }
+                }
+            }
         }
 
     }
     public function destroy($id)
     {
-        $news = news::find($id);
-        if ($news) {
-            $news->delete();
-            return redirect()->back()->with('doneMessage', 'News Deleted');
-        } else {
-            return redirect()->back()->with('doneMessage', 'News Not Exist!');
+        if (auth()->user()->user_role == 1) {
+            $news = news::find($id);
+            if ($news) {
+                $news->delete();
+                return redirect()->back()->with('doneMessage', 'News Deleted');
+            } else {
+                return redirect()->back()->with('doneMessage', 'News Not Exist!');
+            }
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                // echo 'TEst';
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    $news = news::find($id);
+                    if ($news) {
+                        $news->delete();
+                        return redirect()->back()->with('doneMessage', 'News Deleted');
+                    } else {
+                        return redirect()->back()->with('doneMessage', 'News Not Exist!');
+                    }
+                }
+            }
         }
     }
 

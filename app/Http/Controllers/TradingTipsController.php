@@ -19,6 +19,7 @@ class TradingTipsController extends Controller
         if (auth()->user()->user_role == 1) {
             # code...
             $tradingtips = TradingTips::orderBy('created_at', 'desc')->get();
+            return view('tradingtips', compact('tradingtips'));
         }
         else{
             $user = User::find(auth()->user()->id);
@@ -55,158 +56,390 @@ class TradingTipsController extends Controller
 
     public function add()
     {
-        return view("addTradingTips");
+        if (auth()->user()->user_role == 1) {
+            return view("addTradingTips");
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    return view("addTradingTips");
+                }
+            }
+        }
     }
 
     public function store(Request $request)
     {
 
-        date_default_timezone_set('Asia/Karachi');
-
-        $this->validate($request, [
-            'trading_text' => 'required',
-            'trading_type' => 'required',
-        ]);
-
-        $TradingTips = new TradingTips;
-        $Notification = new Notification;
-
-        $TradingTips->trading_text = $request->trading_text;
-        $TradingTips->created_at = date("Y-m-d H:i:s", strtotime('now'));
-        $TradingTips->updated_at = date("Y-m-d H:i:s", strtotime('now'));
-
-        if (!empty($request->trading_type)) {
-            $TradingTips->trading_type = 1;
-            $Notification->notification_text = "New Update has been added";
-            $Notification->signal_type = 1;
-        } else {
-            $TradingTips->trading_type = 0;
-            $Notification->notification_text = "New Update has been added";
-            $Notification->signal_type = 0;
-        }
-
-        $TradingTips->save();
-        $Notification->signal_id = $insertedId = $TradingTips->id;
-        $Notification->save();
-
-        if (!empty($request->trading_type)) {
-
-            // $tokens = Fcm_token::where('user_choice', '!=', 1)->select('fcm_token', 'device_id')->get();
-            // foreach ($tokens as $tok) {
-            //     // print_r($tok->device_id);
-            //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
-            //         $app_setting = AppSetting::where('device_id', $tok->device_id)->select('device_id', 'fcm_token')->where('tips_status', 1)->get();
-            //         foreach ($app_setting as $app) {
-            //             // echo 'Exist';
-            //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
-            //             // echo '<pre>'.print_r($check_token).'</pre>';
-            //             $res = $this->send_push("Latest Update", "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
-            //         }
-            //     } else {
-            //         // echo 'Not Exist';
-                    $tokens = Fcm_token::where('user_choice', '!=', 1)->where('updates_notif',1)->pluck('fcm_token')->toArray();
-                    $res = $this->send_push("Latest Update", "New Update has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
-                    // echo '<pre>'.print_r($fcm).'</pre>';
-            //     }
-            // }
-        } else {
-
-            // $tokens = Fcm_token::where('user_choice', '!=', 0)->select('fcm_token', 'device_id')->get();
-            // foreach ($tokens as $tok) {
-            //     // print_r($tok->device_id);
-            //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
-            //         // echo 'Yes';
-            //         $app_setting = AppSetting::where('device_id', $tok->device_id)->select('device_id', 'fcm_token')->where('tips_status', 1)->get();
-            //         // $current_date_time = Carbon::now()->timestamp;
-            //         foreach ($app_setting as $app) {
-            //             //             // echo 'Exist';
-            //             // echo 'Exist';
-            //             // print_r($app->device_id);
-            //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
-            //             // echo '<pre>'.print_r($check_token).'</pre>';
-            //             // // // //                 // $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
-            //             $res = $this->send_push('Latest Update', "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
-            //         }
-            //     } else {
-            //         // echo 'No';
-            //         // echo 'Not Exist';
-
-                    //         // echo 'Not Exist';
-                    $tokens = Fcm_token::where('user_choice', '!=', 0)->where('updates_notif',1)->pluck('fcm_token')->toArray();
-                    $res = $this->send_push('Latest Update', "New Update has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
-
-                    // echo '<pre>'.print_r($fcm).'</pre>';
-            //     }
-            // }
-            // $endTime = Carbon::now()->timestamp;
-            // $total = $endTime - $current_date_time;
-            // $data = Carbon::createFromTimestamp($total)->toDateTimeString();
-            // dd($data);
-        }
-        // }
-        // }
-        // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
-        return redirect()->back()->with('doneMessage', 'Latest Update Added!');
-    }
-
-    public function edit($id)
-    {
-
-        $tradingtips = TradingTips::find($id);
-
-        if ($tradingtips) {
-            return view("editTradingTips", compact("tradingtips"));
-        } else {
-            return redirect('tradingtips');
-        }
-    }
-
-
-    public function update(Request $request, $id)
-    {
-
-        date_default_timezone_set('Asia/Karachi');
-
-        $TradingTips = TradingTips::find($id);
-
-        if ($TradingTips) {
+        if (auth()->user()->user_role == 1) {
+            date_default_timezone_set('Asia/Karachi');
 
             $this->validate($request, [
                 'trading_text' => 'required',
                 'trading_type' => 'required',
             ]);
 
+            $TradingTips = new TradingTips;
+            $Notification = new Notification;
+
             $TradingTips->trading_text = $request->trading_text;
+            $TradingTips->created_at = date("Y-m-d H:i:s", strtotime('now'));
             $TradingTips->updated_at = date("Y-m-d H:i:s", strtotime('now'));
 
             if (!empty($request->trading_type)) {
                 $TradingTips->trading_type = 1;
+                $Notification->notification_text = "New Update has been added";
+                $Notification->signal_type = 1;
             } else {
                 $TradingTips->trading_type = 0;
-            }
-
-            if (!empty($request->status)) {
-                $TradingTips->status = 0;
-            } else {
-                $TradingTips->status = 1;
+                $Notification->notification_text = "New Update has been added";
+                $Notification->signal_type = 0;
             }
 
             $TradingTips->save();
+            $Notification->signal_id = $insertedId = $TradingTips->id;
+            $Notification->save();
 
-            return redirect()->back()->with('doneMessage', 'Edit Done!');
-        } else {
-            return redirect('tradingtips');
+            if (!empty($request->trading_type)) {
+
+                // $tokens = Fcm_token::where('user_choice', '!=', 1)->select('fcm_token', 'device_id')->get();
+                // foreach ($tokens as $tok) {
+                //     // print_r($tok->device_id);
+                //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+                //         $app_setting = AppSetting::where('device_id', $tok->device_id)->select('device_id', 'fcm_token')->where('tips_status', 1)->get();
+                //         foreach ($app_setting as $app) {
+                //             // echo 'Exist';
+                //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
+                //             // echo '<pre>'.print_r($check_token).'</pre>';
+                //             $res = $this->send_push("Latest Update", "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                //         }
+                //     } else {
+                //         // echo 'Not Exist';
+                        $tokens = Fcm_token::where('user_choice', '!=', 1)->where('updates_notif',1)->pluck('fcm_token')->toArray();
+                        $res = $this->send_push("Latest Update", "New Update has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+                        // echo '<pre>'.print_r($fcm).'</pre>';
+                //     }
+                // }
+            } else {
+
+                // $tokens = Fcm_token::where('user_choice', '!=', 0)->select('fcm_token', 'device_id')->get();
+                // foreach ($tokens as $tok) {
+                //     // print_r($tok->device_id);
+                //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+                //         // echo 'Yes';
+                //         $app_setting = AppSetting::where('device_id', $tok->device_id)->select('device_id', 'fcm_token')->where('tips_status', 1)->get();
+                //         // $current_date_time = Carbon::now()->timestamp;
+                //         foreach ($app_setting as $app) {
+                //             //             // echo 'Exist';
+                //             // echo 'Exist';
+                //             // print_r($app->device_id);
+                //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
+                //             // echo '<pre>'.print_r($check_token).'</pre>';
+                //             // // // //                 // $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
+                //             $res = $this->send_push('Latest Update', "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                //         }
+                //     } else {
+                //         // echo 'No';
+                //         // echo 'Not Exist';
+
+                        //         // echo 'Not Exist';
+                        $tokens = Fcm_token::where('user_choice', '!=', 0)->where('updates_notif',1)->pluck('fcm_token')->toArray();
+                        $res = $this->send_push('Latest Update', "New Update has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+
+                        // echo '<pre>'.print_r($fcm).'</pre>';
+                //     }
+                // }
+                // $endTime = Carbon::now()->timestamp;
+                // $total = $endTime - $current_date_time;
+                // $data = Carbon::createFromTimestamp($total)->toDateTimeString();
+                // dd($data);
+            }
+            // }
+            // }
+            // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
+            return redirect()->back()->with('doneMessage', 'Latest Update Added!');
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    date_default_timezone_set('Asia/Karachi');
+
+                    $this->validate($request, [
+                        'trading_text' => 'required',
+                        'trading_type' => 'required',
+                    ]);
+
+                    $TradingTips = new TradingTips;
+                    $Notification = new Notification;
+
+                    $TradingTips->trading_text = $request->trading_text;
+                    $TradingTips->created_at = date("Y-m-d H:i:s", strtotime('now'));
+                    $TradingTips->updated_at = date("Y-m-d H:i:s", strtotime('now'));
+
+                    if (!empty($request->trading_type)) {
+                        $TradingTips->trading_type = 1;
+                        $Notification->notification_text = "New Update has been added";
+                        $Notification->signal_type = 1;
+                    } else {
+                        $TradingTips->trading_type = 0;
+                        $Notification->notification_text = "New Update has been added";
+                        $Notification->signal_type = 0;
+                    }
+
+                    $TradingTips->save();
+                    $Notification->signal_id = $insertedId = $TradingTips->id;
+                    $Notification->save();
+
+                    if (!empty($request->trading_type)) {
+
+                        // $tokens = Fcm_token::where('user_choice', '!=', 1)->select('fcm_token', 'device_id')->get();
+                        // foreach ($tokens as $tok) {
+                        //     // print_r($tok->device_id);
+                        //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+                        //         $app_setting = AppSetting::where('device_id', $tok->device_id)->select('device_id', 'fcm_token')->where('tips_status', 1)->get();
+                        //         foreach ($app_setting as $app) {
+                        //             // echo 'Exist';
+                        //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
+                        //             // echo '<pre>'.print_r($check_token).'</pre>';
+                        //             $res = $this->send_push("Latest Update", "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                        //         }
+                        //     } else {
+                        //         // echo 'Not Exist';
+                                $tokens = Fcm_token::where('user_choice', '!=', 1)->where('updates_notif',1)->pluck('fcm_token')->toArray();
+                                $res = $this->send_push("Latest Update", "New Update has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+                                // echo '<pre>'.print_r($fcm).'</pre>';
+                        //     }
+                        // }
+                    } else {
+
+                        // $tokens = Fcm_token::where('user_choice', '!=', 0)->select('fcm_token', 'device_id')->get();
+                        // foreach ($tokens as $tok) {
+                        //     // print_r($tok->device_id);
+                        //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+                        //         // echo 'Yes';
+                        //         $app_setting = AppSetting::where('device_id', $tok->device_id)->select('device_id', 'fcm_token')->where('tips_status', 1)->get();
+                        //         // $current_date_time = Carbon::now()->timestamp;
+                        //         foreach ($app_setting as $app) {
+                        //             //             // echo 'Exist';
+                        //             // echo 'Exist';
+                        //             // print_r($app->device_id);
+                        //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
+                        //             // echo '<pre>'.print_r($check_token).'</pre>';
+                        //             // // // //                 // $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
+                        //             $res = $this->send_push('Latest Update', "New Update has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                        //         }
+                        //     } else {
+                        //         // echo 'No';
+                        //         // echo 'Not Exist';
+
+                                //         // echo 'Not Exist';
+                                $tokens = Fcm_token::where('user_choice', '!=', 0)->where('updates_notif',1)->pluck('fcm_token')->toArray();
+                                $res = $this->send_push('Latest Update', "New Update has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+
+                                // echo '<pre>'.print_r($fcm).'</pre>';
+                        //     }
+                        // }
+                        // $endTime = Carbon::now()->timestamp;
+                        // $total = $endTime - $current_date_time;
+                        // $data = Carbon::createFromTimestamp($total)->toDateTimeString();
+                        // dd($data);
+                    }
+                    // }
+                    // }
+                    // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
+                    return redirect()->back()->with('doneMessage', 'Latest Update Added!');
+                }
+            }
+        }
+    }
+
+    public function edit($id)
+    {
+
+        if (auth()->user()->user_role == 1) {
+            $tradingtips = TradingTips::find($id);
+
+            if ($tradingtips) {
+                return view("editTradingTips", compact("tradingtips"));
+            } else {
+                return redirect('tradingtips');
+            }
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    $tradingtips = TradingTips::find($id);
+
+                    if ($tradingtips) {
+                        return view("editTradingTips", compact("tradingtips"));
+                    } else {
+                        return redirect('tradingtips');
+                    }
+                }
+            }
+        }
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        if (auth()->user()->user_role == 1) {
+            date_default_timezone_set('Asia/Karachi');
+
+            $TradingTips = TradingTips::find($id);
+
+            if ($TradingTips) {
+
+                $this->validate($request, [
+                    'trading_text' => 'required',
+                    'trading_type' => 'required',
+                ]);
+
+                $TradingTips->trading_text = $request->trading_text;
+                $TradingTips->updated_at = date("Y-m-d H:i:s", strtotime('now'));
+
+                if (!empty($request->trading_type)) {
+                    $TradingTips->trading_type = 1;
+                } else {
+                    $TradingTips->trading_type = 0;
+                }
+
+                if (!empty($request->status)) {
+                    $TradingTips->status = 0;
+                } else {
+                    $TradingTips->status = 1;
+                }
+
+                $TradingTips->save();
+
+                return redirect()->back()->with('doneMessage', 'Edit Done!');
+            } else {
+                return redirect('tradingtips');
+            }
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    date_default_timezone_set('Asia/Karachi');
+
+                    $TradingTips = TradingTips::find($id);
+
+                    if ($TradingTips) {
+
+                        $this->validate($request, [
+                            'trading_text' => 'required',
+                            'trading_type' => 'required',
+                        ]);
+
+                        $TradingTips->trading_text = $request->trading_text;
+                        $TradingTips->updated_at = date("Y-m-d H:i:s", strtotime('now'));
+
+                        if (!empty($request->trading_type)) {
+                            $TradingTips->trading_type = 1;
+                        } else {
+                            $TradingTips->trading_type = 0;
+                        }
+
+                        if (!empty($request->status)) {
+                            $TradingTips->status = 0;
+                        } else {
+                            $TradingTips->status = 1;
+                        }
+
+                        $TradingTips->save();
+
+                        return redirect()->back()->with('doneMessage', 'Edit Done!');
+                    } else {
+                        return redirect('tradingtips');
+                    }
+                }
+            }
         }
     }
 
     public function destroy($id)
     {
-        $TradingTips = TradingTips::find($id);
-        if ($TradingTips) {
-            $TradingTips->delete();
-            return redirect()->back()->with('doneMessage', 'Trading Deleted');
-        } else {
-            return redirect()->back()->with('doneMessage', 'Trading Not Exist!');
+        if (auth()->user()->user_role == 1) {
+            $TradingTips = TradingTips::find($id);
+            if ($TradingTips) {
+                $TradingTips->delete();
+                return redirect()->back()->with('doneMessage', 'Trading Deleted');
+            } else {
+                return redirect()->back()->with('doneMessage', 'Trading Not Exist!');
+            }
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    // dd('yes');
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    $TradingTips = TradingTips::find($id);
+                    if ($TradingTips) {
+                        $TradingTips->delete();
+                        return redirect()->back()->with('doneMessage', 'Trading Deleted');
+                    } else {
+                        return redirect()->back()->with('doneMessage', 'Trading Not Exist!');
+                    }
+                }
+            }
         }
     }
 

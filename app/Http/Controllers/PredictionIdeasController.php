@@ -19,6 +19,7 @@ class PredictionIdeasController extends Controller
         if (auth()->user()->user_role == 1) {
             # code...
             $predictionideas = PredictionIdeas::orderBy('created_at', 'desc')->get();
+            return view('predictionideas', compact('predictionideas'));
         }
         else{
             $user = User::find(auth()->user()->id);
@@ -58,154 +59,372 @@ class PredictionIdeasController extends Controller
             // }
 
         }
+
     }
 
     public function add()
     {
-        return view("addPredictionIdeas");
+        if (auth()->user()->user_role == 1) {
+            return view("addPredictionIdeas");
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    return view("addPredictionIdeas");
+                }
+            }
+        }
     }
 
     public function store(Request $request)
     {
-
-        date_default_timezone_set('Asia/Karachi');
-
-        $this->validate($request, [
-            'prediction_text' => 'required',
-            'prediction_type' => 'required',
-        ]);
-
-        $PredictionIdeas = new PredictionIdeas;
-        $Notification = new Notification;
-
-        $PredictionIdeas->prediction_text = $request->prediction_text;
-        $PredictionIdeas->created_at = date("Y-m-d H:i:s", strtotime('now'));
-        $PredictionIdeas->updated_at = date("Y-m-d H:i:s", strtotime('now'));
-
-        if (!empty($request->prediction_type)) {
-            $PredictionIdeas->prediction_type = 1;
-            $Notification->notification_text = "New forex signal has been added";
-            $Notification->signal_type = 1;
-        } else {
-            $PredictionIdeas->prediction_type = 0;
-            $Notification->notification_text = "New crypto signal has been added";
-            $Notification->signal_type = 0;
-        }
-
-        $PredictionIdeas->save();
-        $Notification->signal_id = $insertedId = $PredictionIdeas->id;
-        $Notification->save();
-        if (!empty($request->prediction_type)) {
-          
-            // $tokens = Fcm_token::where('user_choice', '!=', 1)->get();
-            // foreach ($tokens as $tok) {
-            //     // print_r($tok->device_id);
-            //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
-            //         $app_setting = AppSetting::where('device_id', $tok->device_id)->where('prediction_status', 1)->get();
-            //         foreach ($app_setting as $app) {
-            //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
-
-            //                 $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
-            //         }
-            //     }
-            //     else{
-                    $tokens = Fcm_token::where('user_choice', '!=', 1)->where('prediction_notif',1)->pluck('fcm_token')->toArray();
-                    $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
-
-            //     }
-            // }
-            
-        } else {
-            // $Notification->signal_id = $insertedId = $PredictionIdeas->id;
-            // $Notification->save();
-            // $tokens = Fcm_token::where('user_choice', '!=', 0)->get();
-            // foreach ($tokens as $tok) {
-            //     // print_r($tok->device_id);
-            //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
-            //         // echo 'Yes';
-            //         $app_setting = AppSetting::where('device_id', $tok->device_id)->where('prediction_status', 1)->get();
-            //         foreach ($app_setting as $app) {
-            //             //             // echo 'Exist';
-            //             // print_r($app->device_id);
-            //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
-            //             // print_r($check_token);
-            //             // // //                 // $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
-            //             $res = $this->send_push('Crypto Prediction', "Crypto prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
-            //         }
-            //     } else {
-            //         // echo 'No';
-                    //         // echo 'Not Exist';
-                    $tokens = Fcm_token::where('user_choice', '!=', 0)->where('prediction_notif',1)->pluck('fcm_token')->toArray();
-                    $res = $this->send_push('Crypto Prediction', "Crypto prediction has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
-
-                    // print_r($fcm);
-            //     }
-            // }
-          
-        }
-
-        // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
-        return redirect()->back()->with('doneMessage', 'Prediction Ideas Added!');
-    }
-
-    public function edit($id)
-    {
-
-        $predictionideas = PredictionIdeas::find($id);
-
-        if ($predictionideas) {
-            return view("editPredictionIdeas", compact("predictionideas"));
-        } else {
-            return redirect('predictionideas');
-        }
-    }
-
-
-    public function update(Request $request, $id)
-    {
-
-        date_default_timezone_set('Asia/Karachi');
-
-        $PredictionIdeas = PredictionIdeas::find($id);
-
-        if ($PredictionIdeas) {
+        if (auth()->user()->user_role == 1) {
+            date_default_timezone_set('Asia/Karachi');
 
             $this->validate($request, [
                 'prediction_text' => 'required',
                 'prediction_type' => 'required',
             ]);
 
+            $PredictionIdeas = new PredictionIdeas;
+            $Notification = new Notification;
+
             $PredictionIdeas->prediction_text = $request->prediction_text;
+            $PredictionIdeas->created_at = date("Y-m-d H:i:s", strtotime('now'));
             $PredictionIdeas->updated_at = date("Y-m-d H:i:s", strtotime('now'));
 
             if (!empty($request->prediction_type)) {
                 $PredictionIdeas->prediction_type = 1;
+                $Notification->notification_text = "New forex signal has been added";
+                $Notification->signal_type = 1;
             } else {
                 $PredictionIdeas->prediction_type = 0;
-            }
-
-            if (!empty($request->status)) {
-                $PredictionIdeas->status = 0;
-            } else {
-                $PredictionIdeas->status = 1;
+                $Notification->notification_text = "New crypto signal has been added";
+                $Notification->signal_type = 0;
             }
 
             $PredictionIdeas->save();
+            $Notification->signal_id = $insertedId = $PredictionIdeas->id;
+            $Notification->save();
+            if (!empty($request->prediction_type)) {
+            
+                // $tokens = Fcm_token::where('user_choice', '!=', 1)->get();
+                // foreach ($tokens as $tok) {
+                //     // print_r($tok->device_id);
+                //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+                //         $app_setting = AppSetting::where('device_id', $tok->device_id)->where('prediction_status', 1)->get();
+                //         foreach ($app_setting as $app) {
+                //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
 
-            return redirect()->back()->with('doneMessage', 'Edit Done!');
-        } else {
-            return redirect('predictionideas');
+                //                 $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                //         }
+                //     }
+                //     else{
+                        $tokens = Fcm_token::where('user_choice', '!=', 1)->where('prediction_notif',1)->pluck('fcm_token')->toArray();
+                        $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+
+                //     }
+                // }
+                
+            } else {
+                // $Notification->signal_id = $insertedId = $PredictionIdeas->id;
+                // $Notification->save();
+                // $tokens = Fcm_token::where('user_choice', '!=', 0)->get();
+                // foreach ($tokens as $tok) {
+                //     // print_r($tok->device_id);
+                //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+                //         // echo 'Yes';
+                //         $app_setting = AppSetting::where('device_id', $tok->device_id)->where('prediction_status', 1)->get();
+                //         foreach ($app_setting as $app) {
+                //             //             // echo 'Exist';
+                //             // print_r($app->device_id);
+                //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
+                //             // print_r($check_token);
+                //             // // //                 // $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
+                //             $res = $this->send_push('Crypto Prediction', "Crypto prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                //         }
+                //     } else {
+                //         // echo 'No';
+                        //         // echo 'Not Exist';
+                        $tokens = Fcm_token::where('user_choice', '!=', 0)->where('prediction_notif',1)->pluck('fcm_token')->toArray();
+                        $res = $this->send_push('Crypto Prediction', "Crypto prediction has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+
+                        // print_r($fcm);
+                //     }
+                // }
+            
+            }
+
+            // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
+            return redirect()->back()->with('doneMessage', 'Prediction Ideas Added!');
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    date_default_timezone_set('Asia/Karachi');
+
+                    $this->validate($request, [
+                        'prediction_text' => 'required',
+                        'prediction_type' => 'required',
+                    ]);
+
+                    $PredictionIdeas = new PredictionIdeas;
+                    $Notification = new Notification;
+
+                    $PredictionIdeas->prediction_text = $request->prediction_text;
+                    $PredictionIdeas->created_at = date("Y-m-d H:i:s", strtotime('now'));
+                    $PredictionIdeas->updated_at = date("Y-m-d H:i:s", strtotime('now'));
+
+                    if (!empty($request->prediction_type)) {
+                        $PredictionIdeas->prediction_type = 1;
+                        $Notification->notification_text = "New forex signal has been added";
+                        $Notification->signal_type = 1;
+                    } else {
+                        $PredictionIdeas->prediction_type = 0;
+                        $Notification->notification_text = "New crypto signal has been added";
+                        $Notification->signal_type = 0;
+                    }
+
+                    $PredictionIdeas->save();
+                    $Notification->signal_id = $insertedId = $PredictionIdeas->id;
+                    $Notification->save();
+                    if (!empty($request->prediction_type)) {
+                    
+                        // $tokens = Fcm_token::where('user_choice', '!=', 1)->get();
+                        // foreach ($tokens as $tok) {
+                        //     // print_r($tok->device_id);
+                        //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+                        //         $app_setting = AppSetting::where('device_id', $tok->device_id)->where('prediction_status', 1)->get();
+                        //         foreach ($app_setting as $app) {
+                        //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
+
+                        //                 $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                        //         }
+                        //     }
+                        //     else{
+                                $tokens = Fcm_token::where('user_choice', '!=', 1)->where('prediction_notif',1)->pluck('fcm_token')->toArray();
+                                $res = $this->send_push("Forex Prediction", "Forex prediction has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+
+                        //     }
+                        // }
+                        
+                    } else {
+                        // $Notification->signal_id = $insertedId = $PredictionIdeas->id;
+                        // $Notification->save();
+                        // $tokens = Fcm_token::where('user_choice', '!=', 0)->get();
+                        // foreach ($tokens as $tok) {
+                        //     // print_r($tok->device_id);
+                        //     if (AppSetting::where('device_id', $tok->device_id)->exists()) {
+                        //         // echo 'Yes';
+                        //         $app_setting = AppSetting::where('device_id', $tok->device_id)->where('prediction_status', 1)->get();
+                        //         foreach ($app_setting as $app) {
+                        //             //             // echo 'Exist';
+                        //             // print_r($app->device_id);
+                        //             $check_token = Fcm_token::where('device_id', $app->device_id)->pluck('fcm_token')->toArray();
+                        //             // print_r($check_token);
+                        //             // // //                 // $tokens = Fcm_token::where('user_choice', '!=', 1)->pluck('fcm_token')->toArray();
+                        //             $res = $this->send_push('Crypto Prediction', "Crypto prediction has been added. Click to view.", $check_token, date('Y-m-d'), 'Fcskill');
+                        //         }
+                        //     } else {
+                        //         // echo 'No';
+                                //         // echo 'Not Exist';
+                                $tokens = Fcm_token::where('user_choice', '!=', 0)->where('prediction_notif',1)->pluck('fcm_token')->toArray();
+                                $res = $this->send_push('Crypto Prediction', "Crypto prediction has been added. Click to view.", $tokens, date('Y-m-d'), 'Fcskill');
+
+                                // print_r($fcm);
+                        //     }
+                        // }
+                    
+                    }
+
+                    // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
+                    return redirect()->back()->with('doneMessage', 'Prediction Ideas Added!');
+                }
+            }
+        }
+    }
+
+    public function edit($id)
+    {
+        if (auth()->user()->user_role == 1) {
+            $predictionideas = PredictionIdeas::find($id);
+
+            if ($predictionideas) {
+                return view("editPredictionIdeas", compact("predictionideas"));
+            } else {
+                return redirect('predictionideas');
+            }
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    $predictionideas = PredictionIdeas::find($id);
+
+                    if ($predictionideas) {
+                        return view("editPredictionIdeas", compact("predictionideas"));
+                    } else {
+                        return redirect('predictionideas');
+                    }
+                }
+            }
+        }
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        if (auth()->user()->user_role == 1) {
+            date_default_timezone_set('Asia/Karachi');
+
+            $PredictionIdeas = PredictionIdeas::find($id);
+
+            if ($PredictionIdeas) {
+
+                $this->validate($request, [
+                    'prediction_text' => 'required',
+                    'prediction_type' => 'required',
+                ]);
+
+                $PredictionIdeas->prediction_text = $request->prediction_text;
+                $PredictionIdeas->updated_at = date("Y-m-d H:i:s", strtotime('now'));
+
+                if (!empty($request->prediction_type)) {
+                    $PredictionIdeas->prediction_type = 1;
+                } else {
+                    $PredictionIdeas->prediction_type = 0;
+                }
+
+                if (!empty($request->status)) {
+                    $PredictionIdeas->status = 0;
+                } else {
+                    $PredictionIdeas->status = 1;
+                }
+
+                $PredictionIdeas->save();
+
+                return redirect()->back()->with('doneMessage', 'Edit Done!');
+            } else {
+                return redirect('predictionideas');
+            }
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    date_default_timezone_set('Asia/Karachi');
+
+                    $PredictionIdeas = PredictionIdeas::find($id);
+
+                    if ($PredictionIdeas) {
+
+                        $this->validate($request, [
+                            'prediction_text' => 'required',
+                            'prediction_type' => 'required',
+                        ]);
+
+                        $PredictionIdeas->prediction_text = $request->prediction_text;
+                        $PredictionIdeas->updated_at = date("Y-m-d H:i:s", strtotime('now'));
+
+                        if (!empty($request->prediction_type)) {
+                            $PredictionIdeas->prediction_type = 1;
+                        } else {
+                            $PredictionIdeas->prediction_type = 0;
+                        }
+
+                        if (!empty($request->status)) {
+                            $PredictionIdeas->status = 0;
+                        } else {
+                            $PredictionIdeas->status = 1;
+                        }
+
+                        $PredictionIdeas->save();
+
+                        return redirect()->back()->with('doneMessage', 'Edit Done!');
+                    } else {
+                        return redirect('predictionideas');
+                    }
+                }
+            }
         }
     }
 
     public function destroy($id)
     {
-        $PredictionIdeas = PredictionIdeas::find($id);
-        if ($PredictionIdeas) {
-            $PredictionIdeas->delete();
-            return redirect()->back()->with('doneMessage', 'Signal Deleted');
-        } else {
-            return redirect()->back()->with('doneMessage', 'Signal Not Exist!');
+        if (auth()->user()->user_role == 1) {
+            $PredictionIdeas = PredictionIdeas::find($id);
+            if ($PredictionIdeas) {
+                $PredictionIdeas->delete();
+                return redirect()->back()->with('doneMessage', 'Signal Deleted');
+            } else {
+                return redirect()->back()->with('doneMessage', 'Signal Not Exist!');
+            }
+        }
+        else{
+            $user = User::find(auth()->user()->id);
+            $permission = $user->User_Has_Permission;
+            // dd($permission);
+            if ($permission == null) {
+                return redirect('/admin/no_access');
+            }
+            else{
+                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+                // dd($permission);
+                if ($permission->isEmpty()) {
+                    return redirect('/admin/no_access');
+                }
+                else{
+                    $PredictionIdeas = PredictionIdeas::find($id);
+                    if ($PredictionIdeas) {
+                        $PredictionIdeas->delete();
+                        return redirect()->back()->with('doneMessage', 'Signal Deleted');
+                    } else {
+                        return redirect()->back()->with('doneMessage', 'Signal Not Exist!');
+                    }
+                }
+            }
         }
     }
 

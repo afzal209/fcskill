@@ -397,7 +397,7 @@ class SignalsController extends Controller
                     }
                 }
             }
-        }
+        }   
     }
 
     public function destroy($id)

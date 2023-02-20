@@ -120,6 +120,9 @@
                         // location.reload();
                         $('#'+id).html('');
                     }
+                    else{
+                        window.location.href = '/admin/no_access';
+                    }   
                 }
             });
         })
@@ -143,6 +146,9 @@
                         location.reload();
                         // $('#'+id).html('');
                     }
+                    else{
+                        window.location.href = '/admin/no_access';
+                    }   
                 }
             });
         })
