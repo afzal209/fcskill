@@ -159,3 +159,13 @@ $useruploadpath = $usersiteroot."$useruploadfolder/";
 $foldershistory[] = $useruploadfolder;
 
 $username = "myfcskill@gmail.com"; $password = 'e9b21fbf39a405348921a6ef33b392b7';
+
+    $useruploadfolder = "assets/uploads/";
+    $useruploadpath = $usersiteroot."$useruploadfolder/";
+    $foldershistory[] = "assets/uploads/";
+        
+
+    $useruploadfolder = "vendor/unisharp/laravel-ckeditor/plugins/imageuploader/uploads";
+    $useruploadpath = $usersiteroot."$useruploadfolder/";
+    $foldershistory[] = "vendor/unisharp/laravel-ckeditor/plugins/imageuploader/uploads";
+        

@@ -8,7 +8,7 @@ use App\Models\Fcm_token;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\AppSetting;
-
+use App\Models\User_Has_Permission;
 use Illuminate\Http\Request;
 
 class PredictionIdeasController extends Controller
@@ -19,17 +19,10 @@ class PredictionIdeasController extends Controller
         if (auth()->user()->user_role == 1) {
             # code...
             $predictionideas = PredictionIdeas::orderBy('created_at', 'desc')->get();
-            return view('predictionideas', compact('predictionideas'));
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',3); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     return redirect('/admin/no_access');
@@ -44,11 +37,11 @@ class PredictionIdeasController extends Controller
                     else{
                         $predictionideas = PredictionIdeas::orderBy('created_at', 'desc')->get();
                     }
-                    return view('predictionideas', compact('predictionideas'));
+                    // return view('predictionideas', compact('predictionideas'));
 
                 }
                 
-            }
+            
             
             // $user = User::find(auth()->user()->id);
             // $permission = $user->user_has_permssion;
@@ -59,6 +52,8 @@ class PredictionIdeasController extends Controller
             // }
 
         }
+        return view('predictionideas', compact('predictionideas'));
+
 
     }
 
@@ -68,14 +63,8 @@ class PredictionIdeasController extends Controller
             return view("addPredictionIdeas");
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',3); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     return redirect('/admin/no_access');
@@ -83,7 +72,7 @@ class PredictionIdeasController extends Controller
                 else{
                     return view("addPredictionIdeas");
                 }
-            }
+            
         }
     }
 
@@ -170,14 +159,8 @@ class PredictionIdeasController extends Controller
             return redirect()->back()->with('doneMessage', 'Prediction Ideas Added!');
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',3); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     return redirect('/admin/no_access');
@@ -262,7 +245,7 @@ class PredictionIdeasController extends Controller
                     // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
                     return redirect()->back()->with('doneMessage', 'Prediction Ideas Added!');
                 }
-            }
+            
         }
     }
 
@@ -278,14 +261,8 @@ class PredictionIdeasController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',3); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     return redirect('/admin/no_access');
@@ -299,7 +276,7 @@ class PredictionIdeasController extends Controller
                         return redirect('predictionideas');
                     }
                 }
-            }
+            
         }
     }
 
@@ -341,14 +318,8 @@ class PredictionIdeasController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',3); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     return redirect('/admin/no_access');
@@ -387,7 +358,7 @@ class PredictionIdeasController extends Controller
                         return redirect('predictionideas');
                     }
                 }
-            }
+            
         }
     }
 
@@ -403,14 +374,8 @@ class PredictionIdeasController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',3); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',3); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     return redirect('/admin/no_access');
@@ -424,7 +389,7 @@ class PredictionIdeasController extends Controller
                         return redirect()->back()->with('doneMessage', 'Signal Not Exist!');
                     }
                 }
-            }
+            
         }
     }
 
@@ -445,10 +410,10 @@ class PredictionIdeasController extends Controller
             //filename to store
             $filenametostore = $filename . '_' . time() . '.' . $extension;
 
-            $request->file('upload')->move(public_path('assets/uploads'), $filenametostore);
+            $request->file('upload')->move(public_path('assets/uploads/images'), $filenametostore);
 
             $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-            $url = asset('assets/uploads/' . $filenametostore);
+            $url = asset('assets/uploads/images/' . $filenametostore);
             $msg = 'Image successfully uploaded';
             $re = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
 

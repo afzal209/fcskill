@@ -5,34 +5,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\News;
 use App\Models\User;
+use App\Models\User_Has_Permission;
 class NewsController extends Controller
 {
     //
     public function index(){
         if (auth()->user()->user_role == 1) {
             $news = News::orderBy('created_at','desc')->get();
-            return view('news',compact('news'));
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',5);
                 if ($permission->isEmpty()) {
                     // dd('yes');
                     return redirect('/admin/no_access');
                 }
                 else{
                     $news = News::orderBy('created_at','desc')->get();
-                    return view('news',compact('news'));
+                    // return view('news',compact('news'));
                 }
-            }
+            
         }
+        return view('news',compact('news'));
+
     }
     public function add(){
 
@@ -40,15 +36,9 @@ class NewsController extends Controller
             return view("addNews");
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',5);
                 if ($permission->isEmpty()) {
                     // dd('yes');
                     return redirect('/admin/no_access');
@@ -57,7 +47,7 @@ class NewsController extends Controller
                     return view("addNews");
                 }
             }
-        }
+        
     }
 
     public function store(Request $request){
@@ -73,15 +63,9 @@ class NewsController extends Controller
             return redirect()->back()->with('doneMessage', 'Successfully saved.');
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',5);
                 if ($permission->isEmpty()) {
                     // dd('yes');
                     return redirect('/admin/no_access');
@@ -99,7 +83,7 @@ class NewsController extends Controller
                 }
             }
             
-        }
+        
     }
 
     public function edit($id){
@@ -114,15 +98,9 @@ class NewsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',5);
                 if ($permission->isEmpty()) {
                     // dd('yes');
                     return redirect('/admin/no_access');
@@ -135,7 +113,7 @@ class NewsController extends Controller
                         return redirect('news');
                     }
                 }
-            }
+            
         }
     }
     
@@ -161,15 +139,9 @@ class NewsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',5);
                 if ($permission->isEmpty()) {
                     // dd('yes');
                     return redirect('/admin/no_access');
@@ -194,7 +166,7 @@ class NewsController extends Controller
                         return redirect('news');
                     }
                 }
-            }
+            
         }
 
     }
@@ -210,15 +182,9 @@ class NewsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',5);
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',5);
                 if ($permission->isEmpty()) {
                     // dd('yes');
                     return redirect('/admin/no_access');
@@ -232,7 +198,7 @@ class NewsController extends Controller
                         return redirect()->back()->with('doneMessage', 'News Not Exist!');
                     }
                 }
-            }
+            
         }
     }
 
@@ -252,10 +218,10 @@ class NewsController extends Controller
             //filename to store
             $filenametostore = $filename.'_'.time().'.'.$extension;
 
-            $request->file('upload')->move(public_path('assets/uploads'), $filenametostore);
+            $request->file('upload')->move(public_path('assets/uploads/images'), $filenametostore);
 
             $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-            $url = asset('assets/uploads/'.$filenametostore);
+            $url = asset('assets/uploads/images/'.$filenametostore);
             $msg = 'Image successfully uploaded';
             $re = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
 

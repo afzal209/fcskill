@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name') }}</title>
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    {{-- <script src="{{ asset('js/app.js') }}" defer></script> --}}
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
     <link rel="shortcut icon" href="{{ asset('favicon.png') }}">
@@ -88,9 +88,45 @@
                         @if (auth()->user()->user_role == 2) 
                            @php 
                             $user = User::find(auth()->user()->id);
-                            $permission = $user->User_Has_Permission->pluck('permission_id')->toArray(); 
+                            $permission = $user->User_Has_Permission->pluck('permission_id')->toArray();
+
                             @endphp
-                            @foreach ($permission as $key => $value) {
+                            @if(in_array(1,$permission))
+                            <li class="{{ Request::is('admin/gain_profits') ? 'active' : '' }}">
+                                <a href="{{ route('gain_profits') }}">
+                                <i class="fa fa-get-pocket" aria-hidden="true"></i> <span class="nav-label">Gain / Profit</span>
+                                </a>
+                            </li>
+                            @endif
+                            @if(in_array(2,$permission))
+                            <li class="{{ Request::is('admin/signals') ? 'active' : '' }}">
+                                <a href="{{ route('signals') }}">
+                                    <i class="fa fa-signal"></i> <span class="nav-label">Signals</span>
+                                </a>
+                            </li>
+                            @endif
+                            @if(in_array(3,$permission))
+                            <li class="{{ Request::is('admin/predictions') ? 'active' : '' }}">
+                                <a href="{{ route('predictions') }}">
+                                    <i class="fa fa-lightbulb-o"></i> <span class="nav-label">Prediction Ideas</span>
+                                </a>
+                            </li>
+                            @endif
+                            @if(in_array(4,$permission))
+                            <li class="{{ Request::is('admin/tradings') ? 'active' : '' }}">
+                                <a href="{{ route('tradings') }}">
+                                    <i class="fa fa-money"></i> <span class="nav-label">Latest Update</span>
+                                </a>
+                            </li>
+                            @endif
+                            @if(in_array(5,$permission))
+                            <li class="{{ Request::is('admin/news') ? 'active' : '' }}">
+                                <a href="{{ route('news') }}">
+                                    <i class="fa fa-newspaper-o"></i> <span class="nav-label">News</span>
+                                </a>
+                            </li>
+                            @endif
+                            {{-- @foreach ($permission as $key => $value) 
                                 @if ($value == 1) 
                                 <li class="{{ Request::is('admin/gain_profits') ? 'active' : '' }}">
                                     <a href="{{ route('gain_profits') }}">
@@ -122,7 +158,7 @@
                                     </a>
                                 </li>
                                 @endif
-                            @endforeach
+                            @endforeach --}}
                         @endif
                         
                         
@@ -271,79 +307,88 @@
 
 
     <script src="{{ asset('vendor/unisharp/laravel-ckeditor/ckeditor.js') }}"></script>
-
+    <script src="{{ asset('vendor/unisharp/ckfinder/ckfinder.js')}}"></script>
     @if (Request::is('admin/signals/add') || Request::is('admin/signals/edit/*'))
         <script>
-            CKEDITOR.replace('signal_text', {
-                extraPlugins: 'imageuploader',
+            var editor = CKEDITOR.replace('signal_text', {
+                // extraPlugins: 'imageuploader',
                 filebrowserUploadUrl: "{{ route('upload_signal_image', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form'
             });
-            CKEDITOR.plugins.addExternal('imageuploader', 'http://127.0.0.1:8000/vendor/unisharp/laravel-ckeditor/plugins/imageuploader/', 'plugin.js');
+            CKFinder.setupCKEditor(editor);
+            // CKEDITOR.plugins.addExternal('imageuploader', 'http://127.0.0.1:8000/vendor/unisharp/laravel-ckeditor/plugins/imageuploader/', 'plugin.js');
         </script>
     @endif
 
     @if (Request::is('admin/predictions/add') || Request::is('admin/predictions/edit/*'))
         <script>
-            CKEDITOR.replace('prediction_text', {
+            var editor = CKEDITOR.replace('prediction_text', {
                 filebrowserUploadUrl: "{{ route('upload_predictions_image', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form'
             });
+            CKFinder.setupCKEditor(editor);
         </script>
     @endif
 
     @if (Request::is('admin/tradings/add') || Request::is('admin/tradings/edit/*'))
         <script>
-            CKEDITOR.replace('trading_text', {
+            var editor = CKEDITOR.replace('trading_text', {
                 filebrowserUploadUrl: "{{ route('upload_tradings_image', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form'
             });
+            CKFinder.setupCKEditor(editor);
         </script>
     @endif
 
     @if (Request::is('admin/market_education'))
         <script>
-            CKEDITOR.replace('technical_analysis', {
+            var technical_analysis_editor = CKEDITOR.replace('technical_analysis', {
                 filebrowserUploadUrl: "{{ route('upload_market_education_image', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form'
             });
-
-            CKEDITOR.replace('fundamental_analysis', {
+            CKFinder.setupCKEditor(technical_analysis_editor);
+            var fundamental_analysis_editor = CKEDITOR.replace('fundamental_analysis', {
                 filebrowserUploadUrl: "{{ route('upload_market_education_image', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form'
             });
+            CKFinder.setupCKEditor(fundamental_analysis_editor);
         </script>
     @endif
 
     @if (Request::is('admin/terms-and-conditions'))
         <script>
-            CKEDITOR.replace('terms_and_conditions', {
+            var terms_and_conditions_editor = CKEDITOR.replace('terms_and_conditions', {
                 filebrowserUploadUrl: "{{ route('upload_terms_and_conditions_image', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form'
             });
+            CKFinder.setupCKEditor(terms_and_conditions_editor);
+
         </script>
     @endif
 
     @if (Request::is('admin/brokers-ranking'))
         <script>
-            CKEDITOR.replace('forex_brokers_ranking', {
+            var forex_brokers_ranking_editor = CKEDITOR.replace('forex_brokers_ranking', {
                 filebrowserUploadUrl: "{{ route('upload_brokers_ranking_image', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form'
             });
-
-            CKEDITOR.replace('crypto_brokers_ranking', {
+            CKFinder.setupCKEditor(forex_brokers_ranking_editor);
+            var crypto_brokers_ranking_editor = CKEDITOR.replace('crypto_brokers_ranking', {
                 filebrowserUploadUrl: "{{ route('upload_brokers_ranking_image', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form'
             });
+            CKFinder.setupCKEditor(crypto_brokers_ranking_editor);
         </script>
     @endif
 
     @if (Request::is('admin/news/add') || Request::is('admin/news/edit/*'))
         <script>
-            CKEDITOR.replace('news_text', {
+            var new_editor = CKEDITOR.replace('news_text', {
                 filebrowserUploadUrl: "{{ route('upload_signal_image', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form'
             });
+            CKFinder.setupCKEditor(new_editor);
+
         </script>
     @endif
 

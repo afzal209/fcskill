@@ -11,7 +11,7 @@ use App\Models\NotificationStatus;
 use App\Models\AppSetting;
 use App\Models\User;
 use Carbon\Carbon;
-
+use App\Models\User_Has_Permission;
 class SignalsController extends Controller
 {
     public function index()
@@ -23,15 +23,9 @@ class SignalsController extends Controller
         }
         else{
             // $signals;
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+           
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',2); 
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',2); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     # code...
@@ -68,7 +62,7 @@ class SignalsController extends Controller
                 //     }
                     
                 // }
-            }
+            
         }
         return view('signals', compact('signals'));
 
@@ -85,15 +79,9 @@ class SignalsController extends Controller
         }
         else{
             // $signals;
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',2); 
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',2); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     # code...
@@ -102,7 +90,7 @@ class SignalsController extends Controller
                 else{
                     return view("addSignal");
                 }
-            }
+            
         }
     }
 
@@ -179,20 +167,14 @@ class SignalsController extends Controller
             return response()->json(['doneMessage' => 'Signal Added!', 'data' => $data]);
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return response()->json(['access' => 1]);
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',2); 
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',2); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     return response()->json(['access' => 1]);
                 }
-                else{
+                else{   
                     date_default_timezone_set('Asia/Karachi');
 
                     $this->validate($request, [
@@ -261,7 +243,7 @@ class SignalsController extends Controller
             
                         return response()->json(['doneMessage' => 'Signal Added!', 'data' => $data]);
                 }
-            }
+            
         }
 
         
@@ -282,15 +264,9 @@ class SignalsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',2); 
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',2); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     # code...
@@ -305,7 +281,7 @@ class SignalsController extends Controller
                         return redirect('signals');
                     }
                 }
-            }
+            
         }
         
     }
@@ -348,15 +324,9 @@ class SignalsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+           
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',2); 
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',2); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     # code...
@@ -396,7 +366,7 @@ class SignalsController extends Controller
                         return redirect('signals');
                     }
                 }
-            }
+            
         }   
     }
 
@@ -412,15 +382,9 @@ class SignalsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',2); 
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',2); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     # code...
@@ -435,7 +399,7 @@ class SignalsController extends Controller
                         return redirect()->back()->with('doneMessage', 'Signal Not Exist!');
                     }
                 }
-            }
+            
         }
     }
 
@@ -456,10 +420,10 @@ class SignalsController extends Controller
             //filename to store
             $filenametostore = $filename . '_' . time() . '.' . $extension;
 
-            $request->file('upload')->move(public_path('assets/uploads'), $filenametostore);
+            $request->file('upload')->move(public_path('assets/uploads/images'), $filenametostore);
 
             $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-            $url = asset('assets/uploads/' . $filenametostore);
+            $url = asset('assets/uploads/images/' . $filenametostore);
             $msg = 'Image successfully uploaded';
             $re = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
 

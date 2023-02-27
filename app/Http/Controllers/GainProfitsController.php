@@ -5,34 +5,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\GainProfit;
 use App\Models\User;
+use App\Models\User_Has_Permission;
 class GainProfitsController extends Controller
 {
     //
     public function index(){
         if (auth()->user()->user_role == 1) {
             $gainprofits = GainProfit::orderBy('created_at','desc')->get();
-            return view('gainprofits',compact('gainprofits'));
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+           
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',1);
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',1);
                 if ($permission->isEmpty()) {
                     // dd('yes');
                     return redirect('/admin/no_access');
                 }
                 else{
                     $gainprofits = GainProfit::orderBy('created_at','desc')->get();
-                    return view('gainprofits',compact('gainprofits'));
+                    // return view('gainprofits',compact('gainprofits'));
                 } 
-            }
+            
         }
+        return view('gainprofits',compact('gainprofits'));
+
     }
     // public function index_demo(){
     //     $gainprofits = GainProfit::orderBy('created_at','desc')->get();
@@ -61,15 +57,9 @@ class GainProfitsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return response()->json(['data' => 'access']);
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',1);
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',1);
                 if ($permission->isEmpty()) {
                     // dd('yes');
                     return response()->json(['data' => 'access']);
@@ -94,7 +84,7 @@ class GainProfitsController extends Controller
                         return response()->json(['data' => 'success']);
                     }
                 }
-            }
+            
         }
         
         // return $request;
@@ -113,15 +103,9 @@ class GainProfitsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
+            
                 // echo 'TEst';
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',1);
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',1);
                 if ($permission->isEmpty()) {
                     // dd('yes');
                     return redirect('/admin/no_access');
@@ -135,7 +119,7 @@ class GainProfitsController extends Controller
                         return redirect()->back()->with('doneMessage', 'Gain Profit Not Exist!');
                     }
                 }
-            }
+            
         }
     }
 }

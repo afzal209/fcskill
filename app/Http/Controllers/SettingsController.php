@@ -102,10 +102,10 @@ class SettingsController extends Controller
             //filename to store
             $filenametostore = $filename.'_'.time().'.'.$extension;
 
-            $request->file('upload')->move(public_path('assets/uploads'), $filenametostore);
+            $request->file('upload')->move(public_path('assets/uploads/images'), $filenametostore);
 
             $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-            $url = asset('assets/uploads/'.$filenametostore);
+            $url = asset('assets/uploads/images/'.$filenametostore);
             $msg = 'Image successfully uploaded';
             $re = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
 

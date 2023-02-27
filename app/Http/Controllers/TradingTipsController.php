@@ -9,6 +9,7 @@ use App\Models\TradingTips;
 use App\Models\AppSetting;
 use DateTime;
 use App\Models\User;
+use App\Models\User_Has_Permission;
 use Illuminate\Http\Request;
 
 
@@ -19,17 +20,10 @@ class TradingTipsController extends Controller
         if (auth()->user()->user_role == 1) {
             # code...
             $tradingtips = TradingTips::orderBy('created_at', 'desc')->get();
-            return view('tradingtips', compact('tradingtips'));
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',4); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     // dd('yes');
@@ -45,12 +39,13 @@ class TradingTipsController extends Controller
                     }else{
                         $tradingtips = TradingTips::orderBy('created_at', 'desc')->get();
                     }
-                    return view('tradingtips', compact('tradingtips'));
+                    // return view('tradingtips', compact('tradingtips'));
 
                 }
-            }
+            
         }
             
+        return view('tradingtips', compact('tradingtips'));
         
     }
 
@@ -60,14 +55,8 @@ class TradingTipsController extends Controller
             return view("addTradingTips");
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',4); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     // dd('yes');
@@ -76,7 +65,7 @@ class TradingTipsController extends Controller
                 else{
                     return view("addTradingTips");
                 }
-            }
+            
         }
     }
 
@@ -172,14 +161,8 @@ class TradingTipsController extends Controller
             return redirect()->back()->with('doneMessage', 'Latest Update Added!');
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',4); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     // dd('yes');
@@ -273,7 +256,7 @@ class TradingTipsController extends Controller
                     // return response()->json(['doneMessage' => 'Signal Added!','data' => $data]);
                     return redirect()->back()->with('doneMessage', 'Latest Update Added!');
                 }
-            }
+            
         }
     }
 
@@ -290,14 +273,8 @@ class TradingTipsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',4); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     // dd('yes');
@@ -312,7 +289,7 @@ class TradingTipsController extends Controller
                         return redirect('tradingtips');
                     }
                 }
-            }
+            
         }
     }
 
@@ -354,14 +331,8 @@ class TradingTipsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+            
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',4); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     // dd('yes');
@@ -401,7 +372,7 @@ class TradingTipsController extends Controller
                         return redirect('tradingtips');
                     }
                 }
-            }
+            
         }
     }
 
@@ -417,14 +388,8 @@ class TradingTipsController extends Controller
             }
         }
         else{
-            $user = User::find(auth()->user()->id);
-            $permission = $user->User_Has_Permission;
-            // dd($permission);
-            if ($permission == null) {
-                return redirect('/admin/no_access');
-            }
-            else{
-                $permission = $user->User_Has_Permission->where('user_id',auth()->user()->id)->where('permission_id',4); 
+        
+                $permission = User_Has_Permission::where('user_id',auth()->user()->id)->where('permission_id',4); 
                 // dd($permission);
                 if ($permission->isEmpty()) {
                     // dd('yes');
@@ -439,7 +404,7 @@ class TradingTipsController extends Controller
                         return redirect()->back()->with('doneMessage', 'Trading Not Exist!');
                     }
                 }
-            }
+            
         }
     }
 
@@ -460,10 +425,10 @@ class TradingTipsController extends Controller
             //filename to store
             $filenametostore = $filename . '_' . time() . '.' . $extension;
 
-            $request->file('upload')->move(public_path('assets/uploads'), $filenametostore);
+            $request->file('upload')->move(public_path('assets/uploads/images'), $filenametostore);
 
             $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-            $url = asset('assets/uploads/' . $filenametostore);
+            $url = asset('assets/uploads/images/' . $filenametostore);
             $msg = 'Image successfully uploaded';
             $re = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
 
