@@ -18,8 +18,13 @@ ini_set('display_errors', 0);
 // ini_set('display_errors', 1);
 
 // Root Url
-$useruploadroot = "http://$_SERVER[HTTP_HOST]";
-
+// $useruploadroot = "http://$_SERVER[HTTP_HOST]";
+function siteURL() {
+    $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || 
+      $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    $domainName = $_SERVER['HTTP_HOST'];
+    return $protocol.$domainName;
+  }
 /*============================ General Settings =======================================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html
 
@@ -70,7 +75,7 @@ $config['images'] = array(
 $config['backends'][] = array(
     'name'         => 'default',
     'adapter'      => 'local',
-    'baseUrl'      => 'http://127.0.0.1:8000/assets/uploads/',
+    'baseUrl'      => siteURL().'/assets/uploads/',
 //  'root'         => '', // Can be used to explicitly set the CKFinder user files directory.
     'chmodFiles'   => 0777,
     'chmodFolders' => 0755,

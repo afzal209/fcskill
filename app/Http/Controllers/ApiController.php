@@ -233,14 +233,14 @@ class ApiController extends Controller
         $verifysignaluser->created_at = date("Y-m-d H:i:s", strtotime('now'));
         $verifysignaluser->updated_at = date("Y-m-d H:i:s", strtotime('now'));
         if($verifysignaluser->save()){
-            Mail::to($signal_user->email)->send(new VerifiedEmail($signal_user));
-            // if ($mail) {
-            //     # code...
-            //     return response()->json(['msg' => 'Check your email']);
-            // }
-            // else{
-            //     return response()->json(['error' => 'Email Not send']);
-            // }
+            $mail = Mail::to($signal_user->email)->send(new VerifiedEmail($signal_user));
+            if ($mail) {
+                # code...
+                return response()->json(['msg' => 'Check your email']);
+            }
+            else{
+                return response()->json(['error' => 'Email Not send']);
+            }
         }
         else{
             return response()->json(['error' => 'Same thing went wrong']);

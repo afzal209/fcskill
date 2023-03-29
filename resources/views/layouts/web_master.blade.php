@@ -38,6 +38,12 @@
 </head>
 
 <body>
+    @if (\Session::has('doneMessage'))
+        <input type="hidden" id="donemessage" value="{{ \Session::get('doneMessage') }}">
+    @endif
+    @if (\Session::has('errorMessage'))
+        <input type="hidden" id="errormessage" value="{{ \Session::get('errorMessage') }}">
+    @endif
     @include('layouts.first_navbar')
     {{-- @include('layouts.second_navbar') --}}
     @include('layouts.third_navbar')
