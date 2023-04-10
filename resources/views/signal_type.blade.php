@@ -166,6 +166,41 @@
                 $('.signal_lh-1').append('Forex & Crypto Signals')
 
             }
+
+            // console.log(func_vemail(id,getToken));
+            var func_email = func_vemail(id,getToken);
+            // console.log(func_email);
+            // if (func_email = 2) {
+            //     $('.text-secondary').hide();
+            //     $('.notify').html('');
+            //     $('.notify').show();
+            //     $('.notify').append('Check Your email for verification');
+            // }
+            // else if(data = 1){
+
+            // }
+                var setIn;
+            
+                    if (func_email.data == 1) {
+                        $('.text-secondary').hide();
+                        $('.notify').show();
+                        $('.notify').append(
+                            'Kindly verify your account by clicking <button class="btn btn-primary" onclick="verify(' +
+                            id + ')">Verify</button> Your email :' + email);
+                    } else if (func_email.data == 2) {
+                        setIn = setInterval(() => {
+                            func_vemail(id,getToken);
+                        }, 5000);
+                        $('.text-secondary').hide();
+                        $('.notify').html('');
+                        $('.notify').show();
+                        $('.notify').append('Check Your email for verification');
+                    } else {
+                        clearInterval(setIn)
+                        $('.text-secondary').hide();
+                        $('.notify').hide();
+                        $('.notify').html('');
+                    }
             // var data = $('<div></div>');
             // console.log(signal_type);
             var signal_data_array = '';
@@ -337,34 +372,34 @@
                 }
             });
 
-            $.ajax({
-                url: '/api/check_verified_email/' + id,
-                headers: {
-                    'Authorization': 'Bearer ' + getToken
-                },
-                type: 'GET',
+            // $.ajax({
+            //     url: '/api/check_verified_email/' + id,
+            //     headers: {
+            //         'Authorization': 'Bearer ' + getToken
+            //     },
+            //     type: 'GET',
 
-                success: function(data) {
-                    // $('.notify').html('');
-                    // console.log(data);
-                    if (data.data == 1) {
-                        $('.text-secondary').hide();
-                        $('.notify').show();
-                        $('.notify').append(
-                            'Kindly verify your account by clicking <button class="btn btn-primary" onclick="verify(' +
-                            id + ')">Verify</button> Your email :' + email);
-                    } else if (data.data == 2) {
-                        $('.text-secondary').hide();
-                        $('.notify').html('');
-                        $('.notify').show();
-                        $('.notify').append('Check Your email for verification');
-                    } else {
-                        $('.text-secondary').hide();
-                        $('.notify').hide();
-                        $('.notify').html('');
-                    }
-                }
-            });
+            //     success: function(data) {
+            //         // $('.notify').html('');
+            //         // console.log(data);
+            //         if (data.data == 1) {
+            //             $('.text-secondary').hide();
+            //             $('.notify').show();
+            //             $('.notify').append(
+            //                 'Kindly verify your account by clicking <button class="btn btn-primary" onclick="verify(' +
+            //                 id + ')">Verify</button> Your email :' + email);
+            //         } else if (data.data == 2) {
+            //             $('.text-secondary').hide();
+            //             $('.notify').html('');
+            //             $('.notify').show();
+            //             $('.notify').append('Check Your email for verification');
+            //         } else {
+            //             $('.text-secondary').hide();
+            //             $('.notify').hide();
+            //             $('.notify').html('');
+            //         }
+            //     }
+            // });
             // $('body').on('click', '.page-link', function() {
             //     // alert('yes');
             //     // console.log(this.id);
@@ -513,6 +548,68 @@
                 }
             })
         }
+        function func_vemail(id,getToken){
+            // console.log(id,getToken);
+            var result = false;
+            $.ajax({
+                url: '/api/check_verified_email/' + id,
+                headers: {
+                    'Authorization': 'Bearer ' + getToken
+                },
+                type: 'GET',
+                async: false,
+                success: function(data) {
+                    // $('.notify').html('');
+                    result =  data;
+                    // console.log(data);
+                    // if (data.data == 1) {
+                    //     $('.text-secondary').hide();
+                    //     $('.notify').show();
+                    //     $('.notify').append(
+                    //         'Kindly verify your account by clicking <button class="btn btn-primary" onclick="verify(' +
+                    //         id + ')">Verify</button> Your email :' + email);
+                    // } else if (data.data == 2) {
+                    //     $('.text-secondary').hide();
+                    //     $('.notify').html('');
+                    //     $('.notify').show();
+                    //     $('.notify').append('Check Your email for verification');
+                    // } else {
+                    //     $('.text-secondary').hide();
+                    //     $('.notify').hide();
+                    //     $('.notify').html('');
+                    // }
+                }
+            });
+            return result;
+        }
+        // $.ajax({
+        //         url: '/api/check_verified_email/' + id,
+        //         headers: {
+        //             'Authorization': 'Bearer ' + getToken
+        //         },
+        //         type: 'GET',
+
+        //         success: function(data) {
+        //             // $('.notify').html('');
+        //             // console.log(data);
+        //             if (data.data == 1) {
+        //                 $('.text-secondary').hide();
+        //                 $('.notify').show();
+        //                 $('.notify').append(
+        //                     'Kindly verify your account by clicking <button class="btn btn-primary" onclick="verify(' +
+        //                     id + ')">Verify</button> Your email :' + email);
+        //             } else if (data.data == 2) {
+        //                 $('.text-secondary').hide();
+        //                 $('.notify').html('');
+        //                 $('.notify').show();
+        //                 $('.notify').append('Check Your email for verification');
+        //             } else {
+        //                 $('.text-secondary').hide();
+        //                 $('.notify').hide();
+        //                 $('.notify').html('');
+        //             }
+        //         }
+        //     });
 
         // function Paginate(pageNo, type) {
         //     // console.lo

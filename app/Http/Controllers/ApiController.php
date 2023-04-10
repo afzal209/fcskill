@@ -19,7 +19,7 @@ use App\Models\VerifySignalUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
-
+use Carbon\Carbon;
 class ApiController extends Controller
 {
 
@@ -209,7 +209,13 @@ class ApiController extends Controller
                 return response()->json(['data' => 1]);
             }
             else if ($check_verified->verifySignalUser->token != null){
-                return response()->json(['data' => 2]);
+                $check_email_time = $check_verified->verifySignalUser->created_at->diffInHours(Carbon::now());
+                if ($check_email_time > 24) {
+                    $check_verified->verifySignalUser->delete();
+                }
+                else{
+                    return response()->json(['data' => 2]);
+                }
             }
 
 
